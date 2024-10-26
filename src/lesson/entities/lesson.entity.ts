@@ -1,7 +1,6 @@
 import { content_type } from 'src/enums/lesson.contentType.enum';
 import { Modules } from 'src/module/entities/module.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
-
 @Entity()
 export class Lesson {
     @PrimaryGeneratedColumn()
@@ -12,12 +11,15 @@ export class Lesson {
 
     @Column({
         type: 'enum',
-        enum: content_type, 
+        enum: content_type,
     })
-    contentType: content_type; 
+    contentType: content_type;
 
     @Column({ type: 'text' })
     content: string;
+
+    @Column({ nullable: true })
+    filePath: string | null;  
 
     @ManyToOne(() => Modules, (module) => module.lessons, { onDelete: 'CASCADE' })
     module: Modules;

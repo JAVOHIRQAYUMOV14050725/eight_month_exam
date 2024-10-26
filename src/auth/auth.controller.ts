@@ -28,7 +28,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('refresh-token')
   async refreshToken(@Headers('authorization') authorizationHeader: string) {
-    const tokens = authorizationHeader.split(' '); // Tokenlarni bo'lish
+    const tokens = authorizationHeader.split(' ');
     const refreshToken = tokens[2]; // Refresh token
     return this.authService.refreshToken(refreshToken);
   }

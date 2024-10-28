@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './entities/course.entity';
@@ -9,6 +9,9 @@ import { Lesson } from 'src/lesson/entities/lesson.entity';
 
 @Injectable()
 export class CourseService {
+  findByName(value: any) {
+      throw new Error('Method not implemented.');
+  }
   constructor(
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
@@ -18,47 +21,69 @@ export class CourseService {
     private readonly lessonsRepository: Repository<Lesson>,
   ) { }
 
-  // Yangi kurs yaratish
-  async create(createCourseDto: CreateCourseDto): Promise<Course> {
+
+
+  async findModulesByCourseId(courseId: number) {
     try {
-      // Avval mavjud kursni tekshiradi
-      const existingCourse = await this.courseRepository.findOne({
-        where: { name: createCourseDto.name },
+      const modules = await this.modulesRepository.find({
+        where: { course: { id: courseId } },
+        relations: ['lessons'],
       });
 
-      if (existingCourse) {
-        throw new ConflictException(`Course with name ${createCourseDto.name} already exists.`);
+      if (!modules || modules.length === 0) {
+        return {
+          statusCode: 404,
+          message: `Modules for course ID ${courseId} not found`
+        };
       }
 
-      // Yangi kursni yaratadi va saqlaydi
-      const course = this.courseRepository.create(createCourseDto);
-      await this.courseRepository.save(course);
-
-      // Modullarni olish
-      const modules = await this.modulesRepository.find({ where: { course: { id: course.id } } });
-
-      // Har bir modul uchun darslarni olish
-      const modulesWithLessons = await Promise.all(
-        modules.map(async (module) => {
-          const lessons = await this.lessonsRepository.find({ where: { moduleId: module.id } });
-          return { ...module, lessons }; // Modulga darslarni qo'shamiz
-        })
-      );
-
-      // Kursni qaytaramiz
       return {
-        ...course,
-        modules: modulesWithLessons, // Yangi modullar va darslar
+        message: `Modules for course ${courseId} successfully fetched`,
+        data: modules,
       };
     } catch (error) {
-      throw new Error(`Error creating course: ${error.message}`);
+      return {
+        statusCode: 500,
+        message: 'An error occurred while fetching modules',
+        error: error.message
+      };
     }
   }
 
 
 
 
-  // Barcha kurslarni modullari va modullarning darslari bilan birga olish
+  async create(createCourseDto: CreateCourseDto): Promise<Course> {
+    try {
+      const existingCourse = await this.courseRepository.findOne({
+        where: { name: createCourseDto.name },
+      });
+
+      if (existingCourse) {
+        throw new ConflictException(`Course with name "${createCourseDto.name}" already exists.`);
+      }
+
+      const course = this.courseRepository.create(createCourseDto);
+      await this.courseRepository.save(course);
+
+      const modules = await this.modulesRepository.find({ where: { course: { id: course.id } } });
+
+      const modulesWithLessons = await Promise.all(
+        modules.map(async (module) => {
+          const lessons = await this.lessonsRepository.find({ where: { moduleId: module.id } });
+          return { ...module, lessons };
+        })
+      );
+
+      return {
+        ...course,
+        modules: modulesWithLessons, 
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(`Error creating course: ${error.message}`);
+    }
+  }
+
   async findAll(): Promise<Course[]> {
     try {
       return await this.courseRepository.find({

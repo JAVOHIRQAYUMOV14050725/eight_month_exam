@@ -1,79 +1,47 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  BadRequestException,
-  Req,
-  Get,
-  InternalServerErrorException, // Import for generic errors
-} from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { User_Role } from 'src/enums/user.role.enum';
+import { Roles } from 'src/decorators/roles.dekorator';
 
 @Controller('lesson')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class LessonController {
   constructor(private readonly lessonService: LessonService) { }
 
   @Post('create')
-  async createLesson(@Body() body: CreateLessonDto, @Req() req: any) {
-    const { title, contentType, content, moduleId } = body;
-
-    if (!title || !contentType || !content || !moduleId) {
-      throw new BadRequestException('All fields must be provided');
-    }
-
-    try {
-      return await this.lessonService.createLesson(body, req.user);
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating lesson', error.message);
-    }
+  @Roles('teacher')
+  async createLesson(
+    @Body() createLessonDto: CreateLessonDto
+  ) {
+    return this.lessonService.create(createLessonDto);
   }
 
   @Get(':courseId')
-  async findAll(@Req() req: any, @Param('courseId') courseId: string) {
-    const parsedCourseId = parseInt(courseId, 10);
-    if (isNaN(parsedCourseId)) {
-      throw new BadRequestException('Invalid courseId, must be an integer');
-    }
-
-    try {
-      return await this.lessonService.findAll(req.user.id, parsedCourseId);
-    } catch (error) {
-      throw new InternalServerErrorException('Error fetching lessons', error.message);
-    }
+  async findAll(@Param('courseId') courseId: number, @Req() req: any) {
+    return this.lessonService.findAll(req.user.id, courseId);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Req() req: any, @Param('courseId') courseId: number) {
-    try {
-      return await this.lessonService.findOne(+id, req.user.id, courseId);
-    } catch (error) {
-      throw new InternalServerErrorException('Error fetching lesson', error.message);
-    }
+  async findOne(@Param('id') id: number, @Req() req: any, @Param('courseId') courseId: number) {
+    return this.lessonService.findOne(id, req.user.id, courseId);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto, @Req() req: any) {
-    try {
-      return await this.lessonService.update(+id, updateLessonDto, req.user);
-    } catch (error) {
-      throw new InternalServerErrorException('Error updating lesson', error.message);
-    }
+  @Roles('teacher')
+  async updateLesson(
+    @Param('id') id: number,
+    @Body() updateLessonDto: UpdateLessonDto
+  ) {
+    return this.lessonService.update(id, updateLessonDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: any) {
-    try {
-      return await this.lessonService.remove(+id, req.user);
-    } catch (error) {
-      throw new InternalServerErrorException('Error deleting lesson', error.message);
-    }
+  @Roles('teacher')
+  async deleteLesson(@Param('id') id: number) {
+    return this.lessonService.remove(id);
   }
 }

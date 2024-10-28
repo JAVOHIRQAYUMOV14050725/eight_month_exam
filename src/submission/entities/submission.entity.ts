@@ -7,8 +7,8 @@ export class Submission {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Assignment, { onDelete: 'CASCADE' })
-    assignment: Assignment;
+    @ManyToOne(() => Assignment, (assignment) => assignment.submissions, { onDelete: 'CASCADE' })
+    assignment: Assignment; 
 
     @ManyToOne(() => User, (user) => user.submissions, { onDelete: 'CASCADE' })
     student: User;

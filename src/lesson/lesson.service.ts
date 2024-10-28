@@ -1,16 +1,10 @@
-import {
-  Injectable,
-  ForbiddenException,
-  NotFoundException,
-  InternalServerErrorException, // Import for generic errors
-} from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from './entities/lesson.entity';
 import { Repository } from 'typeorm';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
-import { User_Role } from 'src/enums/user.role.enum';
 
 @Injectable()
 export class LessonService {
@@ -21,92 +15,73 @@ export class LessonService {
     private readonly enrollmentRepository: Repository<Enrollment>,
   ) { }
 
-  async createLesson(createLessonData: CreateLessonDto, user: any) {
+  async create(createLessonData: CreateLessonDto): Promise<{ statusCode: number, message: string, data?: Lesson }> {
     try {
-      if (user.role !== User_Role.Teacher) {
-        throw new ForbiddenException('Only teachers can create lessons');
-      }
       const lesson = this.lessonRepository.create(createLessonData);
-      return await this.lessonRepository.save(lesson);
+      const savedLesson = await this.lessonRepository.save(lesson);
+      return { statusCode: 201, message: 'Lesson created successfully', data: savedLesson };
     } catch (error) {
-      throw new InternalServerErrorException('Error creating lesson', error.message);
+      console.error('Error creating lesson:', error);
+      return { statusCode: 500, message: `Error creating lesson: ${error.message}` };
     }
   }
 
-  async findAll(userId: number, courseId: number) {
+  async findAll(userId: number, courseId: number): Promise<{ statusCode: number, message: string, data?: Lesson[] }> {
     try {
-      const enrollment = await this.enrollmentRepository.findOne({
-        where: { student: { id: userId }, course: { id: courseId } },
-      });
-
+      const enrollment = await this.enrollmentRepository.findOne({ where: { student: { id: userId }, course: { id: courseId } } });
       if (!enrollment) {
-        throw new ForbiddenException('You are not enrolled in this course');
+        return { statusCode: 403, message: 'You are not enrolled in this course' };
       }
-
-      return await this.lessonRepository.find({
-        where: { module: { course: { id: courseId } } },
-        relations: ['module'],
-      });
+      const lessons = await this.lessonRepository.find({ where: { module: { course: { id: courseId } } }, relations: ['module'] });
+      return { statusCode: 200, message: 'Lessons fetched successfully', data: lessons };
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching lessons', error.message);
+      console.error('Error fetching lessons:', error);
+      return { statusCode: 500, message: `Error fetching lessons: ${error.message}` };
     }
   }
 
-  async findOne(id: number, userId: number, courseId: number) {
+  async findOne(id: number, userId: number, courseId: number): Promise<{ statusCode: number, message: string, data?: Lesson }> {
     try {
-      const enrollment = await this.enrollmentRepository.findOne({
-        where: { student: { id: userId }, course: { id: courseId } },
-      });
-
+      const enrollment = await this.enrollmentRepository.findOne({ where: { student: { id: userId }, course: { id: courseId } } });
       if (!enrollment) {
-        throw new ForbiddenException('You are not enrolled in this course');
+        return { statusCode: 403, message: 'You are not enrolled in this course' };
       }
-
-      const lesson = await this.lessonRepository.findOne({
-        where: { id },
-        relations: ['module'],
-      });
+      const lesson = await this.lessonRepository.findOne({ where: { id }, relations: ['module'] });
       if (!lesson) {
-        throw new NotFoundException(`Lesson with ID ${id} not found`);
+        return { statusCode: 404, message: `Lesson with ID ${id} not found` };
       }
-
-      return lesson;
+      return { statusCode: 200, message: 'Lesson fetched successfully', data: lesson };
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching lesson', error.message);
+      console.error('Error fetching lesson:', error);
+      return { statusCode: 500, message: `Error fetching lesson: ${error.message}` };
     }
   }
 
-  async update(id: number, updateLessonDto: UpdateLessonDto, user: any) {
+  async update(id: number, updateLessonDto: UpdateLessonDto): Promise<{ statusCode: number, message: string, data?: Lesson }> {
     try {
-      if (user.role !== User_Role.Teacher) {
-        throw new ForbiddenException('Only teachers can update lessons');
-      }
-
       const lesson = await this.lessonRepository.preload({ id, ...updateLessonDto });
       if (!lesson) {
-        throw new NotFoundException(`Lesson with ID ${id} not found`);
+        return { statusCode: 404, message: `Lesson with ID ${id} not found` };
       }
-
-      return await this.lessonRepository.save(lesson);
+      const updatedLesson = await this.lessonRepository.save(lesson);
+      return { statusCode: 200, message: 'Lesson updated successfully', data: updatedLesson };
     } catch (error) {
-      throw new InternalServerErrorException('Error updating lesson', error.message);
+      console.error('Error updating lesson:', error);
+      return { statusCode: 500, message: `Error updating lesson: ${error.message}` };
     }
   }
 
-  async remove(id: number, user: any) {
+  async remove(id: number): Promise<{ statusCode: number, message: string }> {
     try {
-      if (user.role !== User_Role.Teacher) {
-        throw new ForbiddenException('Only teachers can delete lessons');
-      }
-
       const lesson = await this.lessonRepository.findOne({ where: { id } });
       if (!lesson) {
-        throw new NotFoundException(`Lesson with ID ${id} not found`);
+        return { statusCode: 404, message: `Lesson with ID ${id} not found` };
       }
-
-      return await this.lessonRepository.remove(lesson);
+      await this.lessonRepository.remove(lesson);
+      return { statusCode: 200, message: 'Lesson deleted successfully' };
     } catch (error) {
-      throw new InternalServerErrorException('Error deleting lesson', error.message);
+      console.error('Error deleting lesson:', error);
+      return { statusCode: 500, message: `Error deleting lesson: ${error.message}` };
     }
   }
 }

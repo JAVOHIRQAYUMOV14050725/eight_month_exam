@@ -1,3 +1,4 @@
+import { Assignment } from 'src/assignment/entities/assignment.entity';
 import { content_type } from 'src/enums/lesson.contentType.enum';
 import { Modules } from 'src/module/entities/module.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
@@ -22,14 +23,15 @@ export class Lesson {
     @Column({ nullable: true })
     filePath: string | null;
 
-    @Column({ type: 'int', nullable: false }) 
+    @Column({ type: 'int', nullable: false })
     moduleId: number;
 
-
-    @ManyToOne(() => Modules, (module) => module.lessons)
-    @JoinColumn({ name: 'moduleId' })
+    @ManyToOne(() => Modules, (module) => module.lessons, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'moduleId' }) 
     module: Modules;
 
+    @ManyToOne(() => Assignment, (assignment) => assignment.lessons)
+    assignment: Assignment;
 
     @CreateDateColumn()
     createdAt: Date;

@@ -1,34 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Param, Body, UseGuards, Patch, BadRequestException } from '@nestjs/common';
 import { AssignmentService } from './assignment.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.dekorator';
 
-@Controller('assignment')
+@Controller('modules')
+@UseGuards(AuthGuard, RolesGuard)
 export class AssignmentController {
-  constructor(private readonly assignmentService: AssignmentService) {}
+  constructor(private readonly assignmentService: AssignmentService) { }
 
-  @Post()
-  create(@Body() createAssignmentDto: CreateAssignmentDto) {
-    return this.assignmentService.create(createAssignmentDto);
+  @Post(':moduleId/assignment')
+  @Roles('teacher')
+  async createAssignment(
+    @Param('moduleId') moduleId: string, // moduleId is a string
+    @Body() createAssignmentDto: CreateAssignmentDto
+  ) {
+    const id = parseInt(moduleId, 10); // Convert moduleId to number
+    if (isNaN(id)) {
+      throw new BadRequestException('Invalid module ID');
+    }
+    
+    return this.assignmentService.create(id, createAssignmentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.assignmentService.findAll();
+  @Get(':moduleId/assignments')
+  async findAll(@Param('moduleId') moduleId: string) {
+    const id = parseInt(moduleId, 10); // Convert moduleId to number
+    if (isNaN(id)) {
+      throw new BadRequestException('Invalid module ID');
+    }
+    return this.assignmentService.findAll(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assignmentService.findOne(+id);
+  @Get('assignment/:id')
+  async findOne(@Param('id') id: string) {
+    const parsedId = parseInt(id, 10);
+    if (isNaN(parsedId)) {
+      throw new BadRequestException('Invalid assignment ID');
+    }
+    return this.assignmentService.findOne(parsedId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssignmentDto: UpdateAssignmentDto) {
-    return this.assignmentService.update(+id, updateAssignmentDto);
+  @Patch('assignment/:id')
+  @Roles('teacher')
+  async updateAssignment(
+    @Param('id') id: string,
+    @Body() updateAssignmentDto: UpdateAssignmentDto
+  ) {
+    const parsedId = parseInt(id, 10);
+    if (isNaN(parsedId)) {
+      throw new BadRequestException('Invalid assignment ID');
+    }
+    return this.assignmentService.update(parsedId, updateAssignmentDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignmentService.remove(+id);
+  @Delete('assignment/:id')
+  @Roles('teacher')
+  async deleteAssignment(@Param('id') id: string) {
+    const parsedId = parseInt(id, 10);
+    if (isNaN(parsedId)) {
+      throw new BadRequestException('Invalid assignment ID');
+    }
+    return this.assignmentService.remove(parsedId);
   }
 }

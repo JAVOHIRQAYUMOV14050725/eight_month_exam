@@ -10,7 +10,7 @@ export class Course {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 100 })
+    @Column({unique:true, length: 100 })
     name: string;
 
     @Column({ type: 'text' })
@@ -35,7 +35,7 @@ export class Course {
     @CreateDateColumn()
     createdAt: Date;
 
-    @OneToMany(() => Modules, (module) => module.course, { onDelete: 'CASCADE' })
+    @OneToMany(() => Modules, (module) => module.course)
     modules: Modules[];
 
     @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { onDelete: 'CASCADE' })

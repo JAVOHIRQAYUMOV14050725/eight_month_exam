@@ -23,6 +23,16 @@ export class ModuleController {
     }
   }
 
+  @Get(':moduleId/lessons')
+  async findLessons(@Param('moduleId') moduleId: string) {
+    try {
+      return await this.moduleService.findLessonsByModuleId(+moduleId);
+    } catch (error) {
+      throw new InternalServerErrorException('An error occurred while fetching lessons');
+    }
+  }
+
+
   @Get()
   async findAll() {
     try {

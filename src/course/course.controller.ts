@@ -4,7 +4,6 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { User_Role } from 'src/enums/user.role.enum';
-
 @Controller('course')
 @UseGuards(AuthGuard)
 export class CourseController {
@@ -30,6 +29,11 @@ export class CourseController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.courseService.findOne(+id);
+  }
+
+  @Get(':courseId/modules')
+  async findModulesByCourseId(@Param('courseId') courseId: string) {
+    return this.courseService.findModulesByCourseId(+courseId);
   }
 
   @Patch(':id')

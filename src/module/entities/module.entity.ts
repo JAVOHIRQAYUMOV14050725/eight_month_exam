@@ -11,17 +11,17 @@ export class Modules {
     @Column({ length: 100 })
     name: string;
 
-    @OneToMany(() => Lesson, (lesson) => lesson.module, { onDelete: 'CASCADE' })
+    @OneToMany(() => Lesson, (lesson) => lesson.module)
     lessons: Lesson[];
 
-    @OneToMany(() => Assignment, (assignment) => assignment.module, { onDelete: 'CASCADE' })
-    assignments: Assignment[]; 
+    @OneToMany(() => Assignment, (assignment) => assignment.module)
+    assignments: Assignment[];
 
     @Column()
     courseId: number;
 
-    @ManyToOne(() => Course, course => course.modules)
-    @JoinColumn({ name: 'courseId' })
+    @ManyToOne(() => Course, course => course.modules, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'courseId' }) 
     course: Course;
 
     @CreateDateColumn()

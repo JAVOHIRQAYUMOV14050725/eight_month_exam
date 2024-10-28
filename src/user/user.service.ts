@@ -35,7 +35,6 @@ export class UserService {
     newUser.refreshToken = undefined;
     const savedUser = await this.userRepository.save(newUser);
     delete savedUser.refreshToken;
-    delete savedUser.password;
     return savedUser;
   }
 

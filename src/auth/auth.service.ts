@@ -25,15 +25,16 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
+    // Faqat admin teacher yaratishi mumkin
     if (role === User_Role.Teacher) {
       throw new ForbiddenException('Teacher registration is not allowed. Only admin can create teacher accounts.');
     }
 
+    // Admin yagonaligi uchun rolni sozlaymiz
     const adminCount = await this.userRepository.count({ where: { role: User_Role.Admin } });
-
-    let userRole = role || User_Role.Student; 
+    let userRole = role || User_Role.Student;
     if (userRole === User_Role.Admin && adminCount >= 1) {
-      userRole = User_Role.Student; 
+      userRole = User_Role.Student;
     }
 
     const user = this.userRepository.create({
@@ -44,7 +45,8 @@ export class AuthService {
     });
     const savedUser = await this.userRepository.save(user);
 
-    delete savedUser.refreshToken;
+    delete savedUser.password; // Parolni olib tashlaymiz
+    delete savedUser.refreshToken; // Refresh tokenni ham olib tashlaymiz, agar kerak bo'lmasa
 
     return savedUser;
   }
@@ -63,10 +65,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.email) {
-      throw new UnauthorizedException('User is logged out. Please login again.');
-    }
-
     const payload = { id: user.id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
@@ -76,6 +74,7 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+
 
   async logout(accessToken: string): Promise<void> {
     try {

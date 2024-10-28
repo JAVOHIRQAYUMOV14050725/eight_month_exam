@@ -28,6 +28,13 @@ export class SubmissionController {
     return this.submissionService.findOneById(id, req.user);
   }
 
+
+
+  @Get('student/:studentId')
+  async findAllByStudent(@Param('studentId') studentId: number, @Req() req: any) {
+    return this.submissionService.findAllByStudent(studentId);
+  }
+
   @Patch(':id')
   async updateSubmission(
     @Param('id') id: number,

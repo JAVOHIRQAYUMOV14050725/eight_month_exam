@@ -30,6 +30,9 @@ export class User {
     @CreateDateColumn()
     createdAt: Date;
 
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    iat: Date;
+
     @OneToMany(() => Course, (course) => course.teacher)
     courses: Course[];
 

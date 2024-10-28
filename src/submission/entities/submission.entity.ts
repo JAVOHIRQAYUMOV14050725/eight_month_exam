@@ -20,6 +20,8 @@ export class Submission {
     feedback: string;
 
     @CreateDateColumn()
-    submissionDate: Date;
+  submissionDate: Date;
+
+  @Column({type:'text'})
   content: string;
 }

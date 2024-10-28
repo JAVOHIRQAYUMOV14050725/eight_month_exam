@@ -53,6 +53,7 @@ export class AuthService {
 
 
 
+
   async login(email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> {
     const user = await this.userRepository.findOne({ where: { email } });
 
@@ -65,6 +66,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Token yaratish uchun foydalanuvchi ma'lumotlarini qo'shamiz
     const payload = { id: user.id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
@@ -74,6 +76,7 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+
 
 
   async logout(accessToken: string): Promise<void> {

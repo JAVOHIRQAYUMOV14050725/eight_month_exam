@@ -1,6 +1,7 @@
+import { Assignment } from 'src/assignment/entities/assignment.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { Lesson } from 'src/lesson/entities/lesson.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Modules {
@@ -10,13 +11,19 @@ export class Modules {
     @Column({ length: 100 })
     name: string;
 
-    @ManyToOne(() => Course, (course) => course.modules, { onDelete: 'CASCADE' })
+    @OneToMany(() => Lesson, (lesson) => lesson.module, { onDelete: 'CASCADE' })
+    lessons: Lesson[];
+
+    @OneToMany(() => Assignment, (assignment) => assignment.module, { onDelete: 'CASCADE' })
+    assignments: Assignment[]; 
+
+    @Column()
+    courseId: number;
+
+    @ManyToOne(() => Course, course => course.modules)
+    @JoinColumn({ name: 'courseId' })
     course: Course;
 
     @CreateDateColumn()
     createdAt: Date;
-
-    @OneToMany(() => Lesson, (lesson) => lesson.module)
-    lessons: Lesson[];
-    assignments: any;
 }

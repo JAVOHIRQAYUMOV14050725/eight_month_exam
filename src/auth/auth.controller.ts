@@ -29,7 +29,7 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(@Headers('authorization') authorizationHeader: string) {
     const tokens = authorizationHeader.split(' ');
-    const refreshToken = tokens[2]; // Refresh token
+    const refreshToken = tokens[2]; 
     return this.authService.refreshToken(refreshToken);
   }
 

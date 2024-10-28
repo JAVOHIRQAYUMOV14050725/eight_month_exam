@@ -1,6 +1,7 @@
 import { content_type } from 'src/enums/lesson.contentType.enum';
 import { Modules } from 'src/module/entities/module.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+
 @Entity()
 export class Lesson {
     @PrimaryGeneratedColumn()
@@ -19,10 +20,16 @@ export class Lesson {
     content: string;
 
     @Column({ nullable: true })
-    filePath: string | null;  
+    filePath: string | null;
 
-    @ManyToOne(() => Modules, (module) => module.lessons, { onDelete: 'CASCADE' })
+    @Column({ type: 'int', nullable: false }) 
+    moduleId: number;
+
+
+    @ManyToOne(() => Modules, (module) => module.lessons)
+    @JoinColumn({ name: 'moduleId' })
     module: Modules;
+
 
     @CreateDateColumn()
     createdAt: Date;

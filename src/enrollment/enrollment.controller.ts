@@ -1,34 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
-import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('enrollment')
+@UseGuards(AuthGuard)
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) {}
+  constructor(private readonly enrollmentService: EnrollmentService) { }
 
   @Post()
-  create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
-    return this.enrollmentService.create(createEnrollmentDto);
+  async create(@Body() createEnrollmentDto: CreateEnrollmentDto, @Req() req: any) {
+    return await this.enrollmentService.create(createEnrollmentDto, req);
   }
 
   @Get()
-  findAll() {
-    return this.enrollmentService.findAll();
+  async findAll(@Req() req: any) { 
+    return await this.enrollmentService.findAll(req);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enrollmentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEnrollmentDto: UpdateEnrollmentDto) {
-    return this.enrollmentService.update(+id, updateEnrollmentDto);
+  async findOne(@Param('id') id: string, @Req() req: any) { 
+    return await this.enrollmentService.findOne(+id, req);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.enrollmentService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const studentId = req.user.id;
+    return await this.enrollmentService.remove(+id, studentId);
   }
 }

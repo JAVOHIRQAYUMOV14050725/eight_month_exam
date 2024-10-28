@@ -1,20 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ForbiddenException, Req } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
 import { User_Role } from 'src/enums/user.role.enum';
 
 @Controller('course')
-@UseGuards(AuthGuard) 
+@UseGuards(AuthGuard)
 export class CourseController {
   constructor(private readonly courseService: CourseService) { }
 
   @Post()
-  @UseGuards(RolesGuard) 
-  @SetMetadata('roles', [User_Role.Admin])
-  async create(@Body() createCourseDto: CreateCourseDto) {
+  async create(
+    @Body() createCourseDto: CreateCourseDto,
+    @Req() req: any
+  ) {
+    const user = req.user;
+    if (user?.role !== User_Role.Admin) {
+      throw new ForbiddenException('Only Admin can create courses');
+    }
     return this.courseService.create(createCourseDto);
   }
 
@@ -29,16 +33,27 @@ export class CourseController {
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard) 
-  @SetMetadata('roles', [User_Role.Admin])
-  async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCourseDto: UpdateCourseDto,
+    @Req() req: any
+  ) {
+    const user = req.user;
+    if (user?.role !== User_Role.Admin) {
+      throw new ForbiddenException('Only Admin can update courses');
+    }
     return this.courseService.update(+id, updateCourseDto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard) 
-  @SetMetadata('roles', [User_Role.Admin])
-  async remove(@Param('id') id: string) {
+  async remove(
+    @Param('id') id: string,
+    @Req() req: any
+  ) {
+    const user = req.user;
+    if (user?.role !== User_Role.Admin) {
+      throw new ForbiddenException('Only Admin can delete courses');
+    }
     return this.courseService.remove(+id);
   }
 }

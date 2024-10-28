@@ -1,8 +1,9 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { Modules } from 'src/module/entities/module.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-
+import { CourseLevel } from 'src/enums/course.level.enum';
+import { Result } from 'src/result/entities/result.entity';
 
 @Entity()
 export class Course {
@@ -15,7 +16,7 @@ export class Course {
     @Column({ type: 'text' })
     description: string;
 
-    @Column({ type: 'decimal' })
+    @Column({ type: 'int' })
     price: number;
 
     @ManyToOne(() => User, (user) => user.courses, { nullable: true })
@@ -24,15 +25,22 @@ export class Course {
     @Column({ length: 100, nullable: true })
     category: string;
 
-    @Column({ length: 50, nullable: true })
-    level: string;
+    @Column({
+        type: 'enum',
+        enum: CourseLevel,
+        default: CourseLevel.EASY,
+    })
+    level: CourseLevel;
 
     @CreateDateColumn()
     createdAt: Date;
 
-    @OneToMany(() => Modules, (module) => module.course)
+    @OneToMany(() => Modules, (module) => module.course, { onDelete: 'CASCADE' })
     modules: Modules[];
 
-    @OneToMany(() => Enrollment, (enrollment) => enrollment.course)
+    @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { onDelete: 'CASCADE' })
     enrollments: Enrollment[];
+
+    @OneToMany(() => Result, (result) => result.course, { onDelete: 'CASCADE' })  
+    results: Result[];
 }

@@ -1,43 +1,79 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  BadRequestException,
+  Req,
+  Get,
+  InternalServerErrorException, // Import for generic errors
+} from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { content_type } from 'src/enums/lesson.contentType.enum';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('lesson')
+@UseGuards(AuthGuard)
 export class LessonController {
-  constructor(private readonly lessonService: LessonService) {}
+  constructor(private readonly lessonService: LessonService) { }
 
   @Post('create')
-  @UseInterceptors(FileInterceptor('file'))
-  async createLesson(
-    @Body() body: CreateLessonDto,
-    @UploadedFile() file?: Express.Multer.File,
-  ) {
-    const filePath = file ? file.path : null;
-    return this.lessonService.createLesson(body, filePath);
+  async createLesson(@Body() body: CreateLessonDto, @Req() req: any) {
+    const { title, contentType, content, moduleId } = body;
+
+    if (!title || !contentType || !content || !moduleId) {
+      throw new BadRequestException('All fields must be provided');
+    }
+
+    try {
+      return await this.lessonService.createLesson(body, req.user);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating lesson', error.message);
+    }
   }
 
+  @Get(':courseId')
+  async findAll(@Req() req: any, @Param('courseId') courseId: string) {
+    const parsedCourseId = parseInt(courseId, 10);
+    if (isNaN(parsedCourseId)) {
+      throw new BadRequestException('Invalid courseId, must be an integer');
+    }
 
-
-  @Get()
-  findAll() {
-    return this.lessonService.findAll();
+    try {
+      return await this.lessonService.findAll(req.user.id, parsedCourseId);
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching lessons', error.message);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lessonService.findOne(+id);
+  async findOne(@Param('id') id: string, @Req() req: any, @Param('courseId') courseId: number) {
+    try {
+      return await this.lessonService.findOne(+id, req.user.id, courseId);
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching lesson', error.message);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto) {
-    return this.lessonService.update(+id, updateLessonDto);
+  async update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto, @Req() req: any) {
+    try {
+      return await this.lessonService.update(+id, updateLessonDto, req.user);
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating lesson', error.message);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.lessonService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    try {
+      return await this.lessonService.remove(+id, req.user);
+    } catch (error) {
+      throw new InternalServerErrorException('Error deleting lesson', error.message);
+    }
   }
 }

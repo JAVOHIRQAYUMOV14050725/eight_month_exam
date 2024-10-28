@@ -12,7 +12,7 @@ export class Assignment {
     @Column()
     maxScore: number;
 
-    @ManyToOne(() => Modules, (module) => module.assignments, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Modules, (module) => module.assignments)
     module: Modules;
 
     @CreateDateColumn()

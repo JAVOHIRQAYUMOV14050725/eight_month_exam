@@ -1,4 +1,17 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateSubmissionDto } from './create-submission.dto';
+import { IsNumber, IsString, IsOptional } from "class-validator";
 
-export class UpdateSubmissionDto extends PartialType(CreateSubmissionDto) {}
+export class UpdateSubmissionDto {
+    @IsNumber()
+    score: number;
+
+    @IsString()
+    feedback: string;
+
+    @IsOptional()
+    @IsNumber()
+    assignmentId?: number;
+
+    @IsOptional()
+    @IsString()
+    content?: string;
+}

@@ -1,23 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, InternalServerErrorException } from '@nestjs/common';
 import { ModuleService } from './module.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
 import { User_Role } from 'src/enums/user.role.enum';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('module')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class ModuleController {
   constructor(private readonly moduleService: ModuleService) { }
 
   @Post()
+  @Roles('teacher')
   async create(@Body() createModuleDto: CreateModuleDto, @Req() req) {
-    const user = req.user;
-    if (user.role !== User_Role.Teacher) {
-      throw new ForbiddenException('Only teachers can create modules');
-    }
     try {
-      return await this.moduleService.create(createModuleDto, user);
+      return await this.moduleService.create(createModuleDto, req.user);
     } catch (error) {
       throw new InternalServerErrorException('An error occurred while creating the module');
     }
@@ -31,7 +30,6 @@ export class ModuleController {
       throw new InternalServerErrorException('An error occurred while fetching lessons');
     }
   }
-
 
   @Get()
   async findAll() {
@@ -52,26 +50,20 @@ export class ModuleController {
   }
 
   @Patch(':id')
+  @Roles('teacher')
   async update(@Param('id') id: string, @Body() updateModuleDto: UpdateModuleDto, @Req() req) {
-    const user = req.user;
-    if (user.role !== User_Role.Teacher) {
-      throw new ForbiddenException('Only teachers can update modules');
-    }
     try {
-      return await this.moduleService.update(+id, updateModuleDto, user);
+      return await this.moduleService.update(+id, updateModuleDto, req.user);
     } catch (error) {
       throw new InternalServerErrorException('An error occurred while updating the module');
     }
   }
 
   @Delete(':id')
+  @Roles('teacher')
   async remove(@Param('id') id: string, @Req() req) {
-    const user = req.user;
-    if (user.role !== User_Role.Teacher) {
-      throw new ForbiddenException('Only teachers can delete modules');
-    }
     try {
-      return await this.moduleService.remove(+id, user);
+      return await this.moduleService.remove(+id, req.user);
     } catch (error) {
       throw new InternalServerErrorException('An error occurred while deleting the module');
     }

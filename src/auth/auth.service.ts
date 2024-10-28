@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { User } from '../user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,24 +16,39 @@ export class AuthService {
   ) { }
 
   async register(createUserDto: CreateUserDto): Promise<Partial<User>> {
-    const { name, email, password } = createUserDto;
+    const { name, email, password, role } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Email mavjudligini tekshiramiz
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
 
-    const adminCount = await this.userRepository.count({ where: { role: User_Role.Admin } });
-    const role = adminCount === 0 ? User_Role.Admin : User_Role.Student;
+    if (role === User_Role.Teacher) {
+      throw new ForbiddenException('Teacher registration is not allowed. Only admin can create teacher accounts.');
+    }
 
-    const user = this.userRepository.create({ name, email, password: hashedPassword, role });
+    const adminCount = await this.userRepository.count({ where: { role: User_Role.Admin } });
+
+    let userRole = role || User_Role.Student; 
+    if (userRole === User_Role.Admin && adminCount >= 1) {
+      userRole = User_Role.Student; 
+    }
+
+    const user = this.userRepository.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: userRole,
+    });
     const savedUser = await this.userRepository.save(user);
 
     delete savedUser.refreshToken;
 
     return savedUser;
   }
+
 
 
   async login(email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> {

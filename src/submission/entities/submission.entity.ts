@@ -21,4 +21,5 @@ export class Submission {
 
     @CreateDateColumn()
     submissionDate: Date;
+  content: string;
 }

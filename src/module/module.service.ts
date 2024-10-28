@@ -59,14 +59,13 @@ export class ModuleService {
       throw new InternalServerErrorException('Failed to fetch modules', error.message);
     }
   }
-
   async findOne(id: number) {
     const module = await this.moduleRepository.findOne({ where: { id } });
-    if (!module) {
-      throw new NotFoundException(`Module ${id} not found`);
-    }
-    return { message: `Module ${id} successfully fetched`, data: module };
+    return module
+      ? { message: `Module ${id} successfully fetched`, data: module }
+      : { message: `Module ${id} not found`, data: null };
   }
+
 
   async update(id: number, updateModuleDto: UpdateModuleDto, user: any) {
     const module = await this.moduleRepository.findOne({ where: { id } });

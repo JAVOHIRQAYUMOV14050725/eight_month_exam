@@ -5,7 +5,7 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { User_Role } from 'src/enums/user.role.enum';
-import { Roles } from 'src/decorators/roles.dekorator';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('lesson')
 @UseGuards(AuthGuard, RolesGuard)

@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  InternalServerErrorException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './entities/course.entity';
@@ -9,9 +16,6 @@ import { Lesson } from 'src/lesson/entities/lesson.entity';
 
 @Injectable()
 export class CourseService {
-  findByName(value: any) {
-      throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
@@ -21,125 +25,160 @@ export class CourseService {
     private readonly lessonsRepository: Repository<Lesson>,
   ) { }
 
-
-
-  async findModulesByCourseId(courseId: number) {
-    try {
-      const modules = await this.modulesRepository.find({
-        where: { course: { id: courseId } },
-        relations: ['lessons'],
-      });
-
-      if (!modules || modules.length === 0) {
-        return {
-          statusCode: 404,
-          message: `Modules for course ID ${courseId} not found`
-        };
-      }
-
-      return {
-        message: `Modules for course ${courseId} successfully fetched`,
-        data: modules,
-      };
-    } catch (error) {
-      return {
-        statusCode: 500,
-        message: 'An error occurred while fetching modules',
-        error: error.message
-      };
-    }
-  }
-
-
-
-
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     try {
       const existingCourse = await this.courseRepository.findOne({
         where: { name: createCourseDto.name },
       });
-
       if (existingCourse) {
         throw new ConflictException(`Course with name "${createCourseDto.name}" already exists.`);
       }
-
       const course = this.courseRepository.create(createCourseDto);
       await this.courseRepository.save(course);
-
       const modules = await this.modulesRepository.find({ where: { course: { id: course.id } } });
-
       const modulesWithLessons = await Promise.all(
         modules.map(async (module) => {
           const lessons = await this.lessonsRepository.find({ where: { moduleId: module.id } });
           return { ...module, lessons };
         })
       );
-
-      return {
-        ...course,
-        modules: modulesWithLessons, 
-      };
+      return { ...course, modules: modulesWithLessons };
     } catch (error) {
-      throw new InternalServerErrorException(`Error creating course: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAll(): Promise<Course[]> {
+  async findAll(isRegistered: boolean): Promise<any[]> {
     try {
-      return await this.courseRepository.find({
-        relations: ['modules', 'modules.lessons'],
-      });
+      const courses = await this.courseRepository.find({ relations: ['modules'] });
+      return await Promise.all(
+        courses.map(async (course) => {
+          const modulesWithLessons = await Promise.all(
+            course.modules.map(async (module) => {
+              const lessons = isRegistered
+                ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
+                : [];
+              return { ...module, lessons: lessons.length ? lessons : lessons.length };
+            })
+          );
+          return {
+            id: course.id,
+            name: course.name,
+            description: course.description,
+            price: course.price,
+            category: course.category,
+            level: course.level,
+            createdAt: course.createdAt,
+            modules: isRegistered ? modulesWithLessons : course.modules.length,
+          };
+        })
+      );
     } catch (error) {
-      throw new Error(`Error fetching courses: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Kursni ID bo'yicha modullari va modullarning darslari bilan olish
-  async findOne(id: number): Promise<Course> {
+  async findOne(id: number, isRegistered: boolean): Promise<any> {
     try {
-      const course = await this.courseRepository.findOne({
-        where: { id },
-        relations: ['modules', 'modules.lessons'],
-      });
-
+      const course = await this.courseRepository.findOne({ where: { id }, relations: ['modules'] });
       if (!course) {
         throw new NotFoundException(`Course with ID ${id} not found.`);
       }
-      return course;
+      const modulesWithLessons = await Promise.all(
+        course.modules.map(async (module) => {
+          const lessons = isRegistered
+            ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
+            : [];
+          return { ...module, lessons: lessons.length ? lessons : lessons.length };
+        })
+      );
+      return {
+        id: course.id,
+        name: course.name,
+        description: course.description,
+        price: course.price,
+        category: course.category,
+        level: course.level,
+        createdAt: course.createdAt,
+        modules: isRegistered ? modulesWithLessons : course.modules.length,
+      };
     } catch (error) {
-      throw new Error(`Error fetching course with ID ${id}: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Kursni yangilash
-  async update(id: number, updateCourseDto: UpdateCourseDto): Promise<Course> {
+  async findModulesByCourseId(courseId: number, isRegistered: boolean): Promise<any> {
     try {
-      const course = await this.findOne(id);
+      const modules = await this.modulesRepository.find({ where: { course: { id: courseId } } });
+      const course = await this.courseRepository.findOne({ where: { id: courseId } });
+      if (!course || !modules || modules.length === 0) {
+        throw new NotFoundException(`Modules for course ID ${courseId} not found`);
+      }
+      const modulesWithLessons = await Promise.all(
+        modules.map(async (module) => {
+          const lessons = isRegistered
+            ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
+            : [];
+          return { ...module, lessons: lessons.length ? lessons : lessons.length };
+        })
+      );
+      return {
+        id: course.id,
+        name: course.name,
+        description: course.description,
+        price: course.price,
+        category: course.category,
+        level: course.level,
+        createdAt: course.createdAt,
+        modules: isRegistered ? modulesWithLessons : modules.length,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
+  async update(id: number, updateCourseDto: UpdateCourseDto, isRegistered: boolean): Promise<any> {
+    try {
+      const course = await this.findOne(id, isRegistered);
       if (updateCourseDto.name) {
         const existingCourse = await this.courseRepository.findOne({
           where: { name: updateCourseDto.name },
         });
-
         if (existingCourse && existingCourse.id !== id) {
           throw new ConflictException(`Course with name ${updateCourseDto.name} already exists.`);
         }
       }
-
       await this.courseRepository.update(id, updateCourseDto);
-      return this.findOne(id);
+      return this.findOne(id, isRegistered);
     } catch (error) {
-      throw new Error(`Error updating course with ID ${id}: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Kursni o'chirish
-  async remove(id: number): Promise<void> {
+  async remove(id: number, isRegistered: boolean): Promise<void> {
     try {
-      const course = await this.findOne(id);
+      const course = await this.findOne(id, isRegistered);
       await this.courseRepository.remove(course);
     } catch (error) {
-      throw new Error(`Error removing course with ID ${id}: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

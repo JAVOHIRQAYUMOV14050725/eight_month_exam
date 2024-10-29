@@ -4,60 +4,65 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { User_Role } from 'src/enums/user.role.enum';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+
+
 @Controller('course')
-@UseGuards(AuthGuard)
 export class CourseController {
   constructor(private readonly courseService: CourseService) { }
 
   @Post()
-  async create(
-    @Body() createCourseDto: CreateCourseDto,
-    @Req() req: any
-  ) {
-    const user = req.user;
-    if (user?.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can create courses');
-    }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  async create(@Body() createCourseDto: CreateCourseDto) {
     return this.courseService.create(createCourseDto);
   }
 
   @Get()
-  async findAll() {
-    return this.courseService.findAll();
+  @UseGuards(AuthGuard)
+  async findAllWithAuth(@Req() req: any) {
+    return this.courseService.findAll(true);
+  }
+
+  @Get('public')
+  async findAllPublic() {
+    return this.courseService.findAll(false);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.courseService.findOne(+id);
+  @UseGuards(AuthGuard)
+  async findOneWithAuth(@Param('id') id: string) {
+    return this.courseService.findOne(+id, true);
+  }
+
+  @Get(':id/public')
+  async findOnePublic(@Param('id') id: string) {
+    return this.courseService.findOne(+id, false);
   }
 
   @Get(':courseId/modules')
-  async findModulesByCourseId(@Param('courseId') courseId: string) {
-    return this.courseService.findModulesByCourseId(+courseId);
+  @UseGuards(AuthGuard)
+  async findModulesWithAuth(@Param('courseId') courseId: string) {
+    return this.courseService.findModulesByCourseId(+courseId, true);
+  }
+
+  @Get(':courseId/modules/public')
+  async findModulesPublic(@Param('courseId') courseId: string) {
+    return this.courseService.findModulesByCourseId(+courseId, false);
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateCourseDto: UpdateCourseDto,
-    @Req() req: any
-  ) {
-    const user = req.user;
-    if (user?.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can update courses');
-    }
-    return this.courseService.update(+id, updateCourseDto);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
+    return this.courseService.update(+id, updateCourseDto, true);
   }
 
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-    @Req() req: any
-  ) {
-    const user = req.user;
-    if (user?.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can delete courses');
-    }
-    return this.courseService.remove(+id);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  async remove(@Param('id') id: string) {
+    return this.courseService.remove(+id, true);
   }
 }

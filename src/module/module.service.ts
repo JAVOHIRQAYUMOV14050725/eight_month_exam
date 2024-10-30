@@ -4,25 +4,29 @@ import { UpdateModuleDto } from './dto/update-module.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Modules } from './entities/module.entity';
 import { Repository } from 'typeorm';
-import { Course } from '../course/entities/course.entity'; // Course entityni import qilish
+import { Course } from '../course/entities/course.entity';
 
 @Injectable()
 export class ModuleService {
+
   constructor(
     @InjectRepository(Modules)
     private readonly moduleRepository: Repository<Modules>,
-    @InjectRepository(Course) // Course repository ni inject qilish
-    private readonly courseRepository: Repository<Course>, // Course repositoryni qo'shish
+    @InjectRepository(Course)
+    private readonly courseRepository: Repository<Course>,
   ) { }
 
   async create(createModuleDto: CreateModuleDto, user: any) {
-    // courseId borligini tekshirish
     if (createModuleDto.courseId) {
       const existingCourse = await this.courseRepository.findOne({ where: { id: createModuleDto.courseId } });
       if (!existingCourse) {
+        const availableCourses = await this.courseRepository.find({
+          select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+        });
         return {
           statusCode: 404,
           message: `Course with ID ${createModuleDto.courseId} not found.`,
+          availableCourses,
         };
       }
     }
@@ -40,6 +44,8 @@ export class ModuleService {
     }
   }
 
+
+
   async findLessonsByModuleId(moduleId: number) {
     try {
       const module = await this.moduleRepository.findOne({
@@ -47,9 +53,13 @@ export class ModuleService {
         relations: ['lessons'],
       });
       if (!module) {
+        const availableModules = await this.moduleRepository.find({
+          select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+        });
         return {
           statusCode: 404,
           message: `Module ${moduleId} not found`,
+          availableModules,
         };
       }
       return {
@@ -65,32 +75,30 @@ export class ModuleService {
     }
   }
 
-  async findAll() {
-    try {
-      const modules = await this.moduleRepository.find();
-      return { message: 'Modules successfully fetched', data: modules };
-    } catch (error) {
-      return {
-        statusCode: 500,
-        message: 'Failed to fetch modules',
-        error: error.message,
-      };
-    }
-  }
-
   async findOne(id: number) {
     const module = await this.moduleRepository.findOne({ where: { id } });
-    return module
-      ? { message: `Module ${id} successfully fetched`, data: module }
-      : { message: `Module ${id} not found`, data: null };
+    if (!module) {
+      const availableModules = await this.moduleRepository.find({
+        select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+      });
+      return {
+        message: `Module ${id} not found`,
+        availableModules,
+      };
+    }
+    return { message: `Module ${id} successfully fetched`, data: module };
   }
 
   async update(id: number, updateModuleDto: UpdateModuleDto, user: any) {
     const module = await this.moduleRepository.findOne({ where: { id } });
     if (!module) {
+      const availableModules = await this.moduleRepository.find({
+        select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+      });
       return {
         statusCode: 404,
         message: `Module ${id} not found`,
+        availableModules,
       };
     }
     try {
@@ -111,9 +119,13 @@ export class ModuleService {
   async remove(id: number, user: any) {
     const module = await this.moduleRepository.findOne({ where: { id } });
     if (!module) {
+      const availableModules = await this.moduleRepository.find({
+        select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+      });
       return {
         statusCode: 404,
         message: `Module ${id} not found`,
+        availableModules,
       };
     }
     try {

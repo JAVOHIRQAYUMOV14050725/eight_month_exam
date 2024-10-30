@@ -31,14 +31,7 @@ export class ModuleController {
     }
   }
 
-  @Get()
-  async findAll() {
-    try {
-      return await this.moduleService.findAll();
-    } catch (error) {
-      throw new InternalServerErrorException('An error occurred while fetching modules');
-    }
-  }
+
 
   @Get(':id')
   async findOne(@Param('id') id: string) {

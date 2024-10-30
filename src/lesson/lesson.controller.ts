@@ -20,14 +20,17 @@ export class LessonController {
     return this.lessonService.create(createLessonDto);
   }
 
-  @Get(':courseId')
+  @Get(':courseId/onCourse')
   async findAll(@Param('courseId') courseId: number, @Req() req: any) {
-    return this.lessonService.findAll(req.user.id, courseId);
+    const userRole = req.user.role;
+    return this.lessonService.findAll(req.user.id, courseId, userRole);
   }
+
 
   @Get(':id')
   async findOne(@Param('id') id: number, @Req() req: any, @Param('courseId') courseId: number) {
-    return this.lessonService.findOne(id, req.user.id, courseId);
+    const userRole = req.user.role;
+    return this.lessonService.findOne(id, req.user.id, courseId, userRole);
   }
 
   @Patch(':id')

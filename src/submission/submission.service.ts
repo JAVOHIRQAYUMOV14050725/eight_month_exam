@@ -102,7 +102,6 @@ export class SubmissionService {
       throw new ForbiddenException('User must be authenticated.');
     }
 
-    // O'qituvchi bo'lsa
     if (user.role === User_Role.Teacher) {
       const submissions = await this.submissionRepository.find({ relations: ['student', 'assignment'] });
       const assignments = await this.assignmentRepository.find(); // Barcha vazifalarni olish
@@ -124,7 +123,7 @@ export class SubmissionService {
         ungraded: ungraded.map(sub => this.excludeSensitiveInfo(sub, true)),
         notSubmitted: notSubmittedDetails,
       };
-    } else { // Talaba bo'lsa
+    } else { 
       const submissions = await this.submissionRepository.find({ where: { student: { id: user.id } }, relations: ['assignment'] });
       const assignments = await this.assignmentRepository.find(); // Barcha vazifalarni olish
 
@@ -158,7 +157,6 @@ export class SubmissionService {
 
   async create(createSubmissionDto: CreateSubmissionDto, student: any): Promise<Omit<Submission, 'student'>> {
     try {
-      // Check if the assignment exists
       const assignment = await this.assignmentRepository.findOne({ where: { id: createSubmissionDto.assignmentId } });
       if (!assignment) {
         const availableAssignments = await this.assignmentRepository.find();

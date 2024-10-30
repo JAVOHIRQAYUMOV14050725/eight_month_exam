@@ -102,7 +102,6 @@ export class EnrollmentService {
   async remove(courseId: number, req: any) {
     const userId = req.user.id;
 
-    // Foydalanuvchining obunalari
     const enrollments = await this.enrollmentRepository.find({
       where: { student: { id: userId } },
       relations: ['course'],

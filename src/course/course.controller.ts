@@ -38,8 +38,9 @@ export class CourseController {
 
   @Get(':id/public')
   async findOnePublic(@Param('id') id: string) {
-    return this.courseService.findOne(+id, false);
+    return await this.courseService.findOne(+id, false); 
   }
+
 
   @Get(':courseId/modules')
   @UseGuards(AuthGuard)

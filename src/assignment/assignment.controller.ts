@@ -27,13 +27,15 @@ export class AssignmentController {
   }
 
   @Get(':moduleId/assignments')
-  async findAll(@Param('moduleId') moduleId: string) {
+  async findAll(@Param('moduleId') moduleId: string) {  
     const id = parseInt(moduleId, 10);
     if (isNaN(id)) {
       throw new BadRequestException('Invalid module ID');
     }
     return this.assignmentService.findAll(id);
   }
+
+
 
   @Get('assignment/:id')
   async findOne(@Param('id') id: string) {

@@ -81,16 +81,25 @@ export class AuthService {
 
   async logout(accessToken: string): Promise<void> {
     try {
+      // Access tokenni tekshirish va foydalanuvchi ma'lumotlarini olish
       const payload = this.jwtService.verify(accessToken);
       const user = await this.userRepository.findOne({ where: { id: payload.id } });
 
-      if (user) {
-        await this.userRepository.remove(user);
+      // Agar foydalanuvchi topilmasa, xato chiqarish
+      if (!user) {
+        throw new UnauthorizedException('User not found');
       }
+
+      // Refresh tokenni o‘chirish
+      user.refreshToken = null; // Refresh tokenni o‘chirish
+      await this.userRepository.save(user); // O‘zgarishlarni saqlash
     } catch (error) {
+      // Agar access token noto‘g‘ri bo‘lsa, xato chiqarish
       throw new UnauthorizedException('Invalid access token');
     }
   }
+
+
 
 
 

@@ -27,7 +27,7 @@ export class CourseController {
 
   @Get('public')
   async findAllPublic() {
-    return this.courseService.findAll(false);
+    return this.courseService.findAll(false); 
   }
 
   @Get(':id')

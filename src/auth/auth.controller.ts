@@ -1,7 +1,11 @@
-import { Controller, Post, Body, UseGuards, Headers, Get } from '@nestjs/common';
+import { User_Role } from './../enums/user.role.enum';
+import { Controller, Post, Body, UseGuards, Headers, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { User } from 'src/user/entities/user.entity';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -40,4 +44,56 @@ export class AuthController {
     const accessToken = tokens[1];
     return this.authService.getMe(accessToken);
   }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get('users/all')
+  @Roles(User_Role.Admin, User_Role.Teacher)
+  async findAll(@Req() req: any): Promise<{ message: string, users: any[] }> {
+    const userRole = req.user.role;
+    const { message, teachers, students } = await this.authService.getAllUsers(userRole);
+
+    let users: any[] = [];
+
+    if (userRole === User_Role.Admin) {
+      users = [
+        {
+          "mana teacherlar": teachers.map(teacher => ({
+            id: teacher.id,
+            name: teacher.name,
+            email: teacher.email,
+            role: teacher.role,
+            createdAt: teacher.createdAt,
+          }))
+        },
+        {
+          "mana studentlar": students.map(student => ({
+            id: student.id,
+            name: student.name,
+            email: student.email,
+            role: student.role,
+            createdAt: student.createdAt,
+          }))
+        }
+      ];
+    } else if (userRole === User_Role.Teacher) {
+      users = [
+        {
+          "mana studentlar": students.map(student => ({
+            id: student.id,
+            name: student.name,
+            email: student.email,
+            role: student.role,
+            createdAt: student.createdAt,
+          }))
+        }
+      ];
+    }
+
+    return { message, users }; // xabar va foydalanuvchilarni qaytarish
+  }
+
+
+
+
+
 }

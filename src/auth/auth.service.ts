@@ -9,6 +9,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -19,18 +20,15 @@ export class AuthService {
     const { name, email, password, role } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Email mavjudligini tekshiramiz
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
 
-    // Faqat admin teacher yaratishi mumkin
     if (role === User_Role.Teacher) {
       throw new ForbiddenException('Teacher registration is not allowed. Only admin can create teacher accounts.');
     }
 
-    // Admin yagonaligi uchun rolni sozlaymiz
     const adminCount = await this.userRepository.count({ where: { role: User_Role.Admin } });
     let userRole = role || User_Role.Student;
     if (userRole === User_Role.Admin && adminCount >= 1) {
@@ -45,8 +43,8 @@ export class AuthService {
     });
     const savedUser = await this.userRepository.save(user);
 
-    delete savedUser.password; // Parolni olib tashlaymiz
-    delete savedUser.refreshToken; // Refresh tokenni ham olib tashlaymiz, agar kerak bo'lmasa
+    delete savedUser.password; 
+    delete savedUser.refreshToken; 
 
     return savedUser;
   }
@@ -66,7 +64,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Token yaratish uchun foydalanuvchi ma'lumotlarini qo'shamiz
     const payload = { id: user.id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
@@ -85,16 +82,13 @@ export class AuthService {
       const payload = this.jwtService.verify(accessToken);
       const user = await this.userRepository.findOne({ where: { id: payload.id } });
 
-      // Agar foydalanuvchi topilmasa, xato chiqarish
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
 
-      // Refresh tokenni o‘chirish
-      user.refreshToken = null; // Refresh tokenni o‘chirish
-      await this.userRepository.save(user); // O‘zgarishlarni saqlash
+      user.refreshToken = null; 
+      await this.userRepository.save(user); 
     } catch (error) {
-      // Agar access token noto‘g‘ri bo‘lsa, xato chiqarish
       throw new UnauthorizedException('Invalid access token');
     }
   }
@@ -135,5 +129,39 @@ export class AuthService {
       throw new UnauthorizedException('Invalid access token');
     }
   }
+
+
+
+  async getAllUsers(role: User_Role): Promise<{ teachers: Partial<User>[]; students: Partial<User>[]; message: string }> {
+    let teachers: User[] = [];
+    let students: User[] = [];
+    let message: string;
+
+    if (role === User_Role.Admin) {
+      teachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
+      students = await this.userRepository.find({ where: { role: User_Role.Student } });
+
+      message = `Mana teacherlar soni: ${teachers.length}, Mana studentlar soni: ${students.length}`;
+    } else if (role === User_Role.Teacher) {
+      students = await this.userRepository.find({ where: { role: User_Role.Student } });
+      message = `Mana studentlar soni: ${students.length}`;
+    } else {
+      throw new ForbiddenException('You do not have permission to access this resource');
+    }
+
+    teachers.forEach(user => {
+      delete user.password;
+      delete user.refreshToken;
+    });
+
+    students.forEach(user => {
+      delete user.password;
+      delete user.refreshToken;
+    });
+
+    return { teachers, students, message };
+  }
+
+
 
 }

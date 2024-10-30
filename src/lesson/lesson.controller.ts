@@ -34,7 +34,7 @@ export class LessonController {
   }
 
   @Patch(':id')
-  @Roles(User_Role.Teacher)
+  @Roles(User_Role.Teacher)   
   async updateLesson(
     @Param('id') id: number,
     @Body() updateLessonDto: UpdateLessonDto

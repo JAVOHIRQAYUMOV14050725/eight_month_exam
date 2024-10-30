@@ -98,7 +98,6 @@ export class SubmissionService {
 
 
   async findAll(user: any): Promise<any> {
-    // Foydalanuvchi autentifikatsiyalanganligini tekshirish
     if (!user || !user.id) {
       throw new ForbiddenException('User must be authenticated.');
     }

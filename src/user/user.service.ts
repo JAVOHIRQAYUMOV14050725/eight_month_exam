@@ -14,6 +14,15 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) { }
 
+  private async findTeachers() {
+    const teachers = await this.userRepository.find({
+      where: { role: User_Role.Teacher },
+      select: ['id', 'name'],
+    });
+    return teachers;
+  }
+
+
   async create(createUserDto: CreateUserDto) {
     try {
       const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
@@ -33,37 +42,23 @@ export class UserService {
       delete savedUser.password;
       return savedUser;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      const existingUser = await this.userRepository.findOne({ where: { id } });
+      const existingUser = await this.userRepository.findOne({ where: { id, role: User_Role.Teacher } });
       if (!existingUser) {
-        throw new NotFoundException(`User with ID ${id} not found.`);
-      }
+        const allTeachers = await this.findTeachers();
+        const teacherInfo = allTeachers.length
+          ? allTeachers.map(teacher => teacher.name ? `{ Name: ${teacher.name}, ID: ${teacher.id} }` : `{ ID: ${teacher.id} }`).join(', ')
+          : 'No Teacher users found.';
 
-      if (updateUserDto.email) {
-        const existingEmailUser = await this.userRepository.findOne({ where: { email: updateUserDto.email } });
-        if (existingEmailUser && existingEmailUser.id !== id) {
-          throw new ConflictException(`Email ${updateUserDto.email} is already in use by another user.`);
-        }
+        throw new NotFoundException(`User with ID ${id} not found. Available Teachers: ${teacherInfo}`);
       }
-
-      if (updateUserDto.password) {
-        updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-      }
-
-      await this.userRepository.update(id, { ...existingUser, ...updateUserDto });
-      return { ...existingUser, ...updateUserDto, refreshToken: undefined };
+      // Qolgan update logikasi
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -73,42 +68,43 @@ export class UserService {
       const users = await this.userRepository.find({ where: { role: User_Role.Teacher } });
       return users.map(user => ({ ...user, refreshToken: undefined, password: undefined }));
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async findOne(id: number) {
     try {
-      const foundUser = await this.userRepository.findOne({ where: { id } });
+      const foundUser = await this.userRepository.findOne({ where: { id, role: User_Role.Teacher } });
       if (!foundUser) {
-        throw new NotFoundException(`User with ID ${id} not found.`);
+        const allTeachers = await this.findTeachers();
+        const teacherInfo = allTeachers.length
+          ? allTeachers.map(teacher => teacher.name ? `{ Name: ${teacher.name}, ID: ${teacher.id} }` : `{ ID: ${teacher.id} }`).join(', ')
+          : 'No Teacher users found.';
+
+        throw new NotFoundException(`User with ID ${id} not found. Available Teachers: ${teacherInfo}`);
       }
       const { password, refreshToken, ...userWithoutSensitiveData } = foundUser;
       return userWithoutSensitiveData;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async remove(id: number) {
     try {
-      const existingUser = await this.userRepository.findOne({ where: { id } });
+      const existingUser = await this.userRepository.findOne({ where: { id, role: User_Role.Teacher } });
       if (!existingUser) {
-        throw new NotFoundException(`User with ID ${id} not found.`);
+        const allTeachers = await this.findTeachers();
+        const teacherInfo = allTeachers.length
+          ? allTeachers.map(teacher => teacher.name ? `{ Name: ${teacher.name}, ID: ${teacher.id} }` : `{ ID: ${teacher.id} }`).join(', ')
+          : 'No Teacher users found.';
+
+        throw new NotFoundException(`User with ID ${id} not found. Available Teachers: ${teacherInfo}`);
       }
 
       await this.userRepository.delete(id);
       return `User with ID #${id} has been removed.`;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

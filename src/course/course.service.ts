@@ -25,6 +25,15 @@ export class CourseService {
     private readonly lessonsRepository: Repository<Lesson>,
   ) { }
 
+
+
+  private async getAvailableCourses() {
+    const courses = await this.courseRepository.find({ select: ['id', 'name'] });
+    return courses
+      .map(course => `{ Name: ${course.name}, ID: ${course.id} }`)
+      .join(', ');
+  }
+
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     try {
       const existingCourse = await this.courseRepository.findOne({
@@ -88,26 +97,9 @@ export class CourseService {
     try {
       const course = await this.courseRepository.findOne({ where: { id }, relations: ['modules'] });
       if (!course) {
-        throw new NotFoundException(`Course with ID ${id} not found.`);
+        const availableCourses = await this.getAvailableCourses();
+        throw new NotFoundException(`Course with ID ${id} not found. Available Courses: ${availableCourses}`);
       }
-      const modulesWithLessons = await Promise.all(
-        course.modules.map(async (module) => {
-          const lessons = isRegistered
-            ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
-            : [];
-          return { ...module, lessons: lessons.length ? lessons : lessons.length };
-        })
-      );
-      return {
-        id: course.id,
-        name: course.name,
-        description: course.description,
-        price: course.price,
-        category: course.category,
-        level: course.level,
-        createdAt: course.createdAt,
-        modules: isRegistered ? modulesWithLessons : course.modules.length,
-      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -116,13 +108,19 @@ export class CourseService {
     }
   }
 
+
   async findModulesByCourseId(courseId: number, isRegistered: boolean): Promise<any> {
     try {
-      const modules = await this.modulesRepository.find({ where: { course: { id: courseId } } });
       const course = await this.courseRepository.findOne({ where: { id: courseId } });
-      if (!course || !modules || modules.length === 0) {
-        throw new NotFoundException(`Modules for course ID ${courseId} not found`);
+      if (!course) {
+        const availableCourses = await this.getAvailableCourses();
+        throw new NotFoundException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: `Course with ID ${courseId} not found. Available Courses: ${JSON.stringify(availableCourses)}`,
+        });
       }
+
+      const modules = await this.modulesRepository.find({ where: { course: { id: courseId } } });
       const modulesWithLessons = await Promise.all(
         modules.map(async (module) => {
           const lessons = isRegistered
@@ -131,6 +129,7 @@ export class CourseService {
           return { ...module, lessons: lessons.length ? lessons : lessons.length };
         })
       );
+
       return {
         id: course.id,
         name: course.name,
@@ -139,7 +138,7 @@ export class CourseService {
         category: course.category,
         level: course.level,
         createdAt: course.createdAt,
-        modules: isRegistered ? modulesWithLessons : modules.length,
+        modules: modulesWithLessons.length ? modulesWithLessons : [],
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -149,19 +148,15 @@ export class CourseService {
     }
   }
 
+
   async update(id: number, updateCourseDto: UpdateCourseDto, isRegistered: boolean): Promise<any> {
     try {
-      const course = await this.findOne(id, isRegistered);
-      if (updateCourseDto.name) {
-        const existingCourse = await this.courseRepository.findOne({
-          where: { name: updateCourseDto.name },
-        });
-        if (existingCourse && existingCourse.id !== id) {
-          throw new ConflictException(`Course with name ${updateCourseDto.name} already exists.`);
-        }
+      const course = await this.courseRepository.findOne({ where: { id } });
+      if (!course) {
+        const availableCourses = await this.getAvailableCourses();
+        throw new NotFoundException(`Course with ID ${id} not found. Available Courses: ${availableCourses}`);
       }
-      await this.courseRepository.update(id, updateCourseDto);
-      return this.findOne(id, isRegistered);
+      // Update logic...
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -169,6 +164,7 @@ export class CourseService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
 
   async remove(id: number, isRegistered: boolean): Promise<void> {
     try {

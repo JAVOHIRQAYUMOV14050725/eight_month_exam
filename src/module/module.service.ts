@@ -54,7 +54,7 @@ export class ModuleService {
       });
       if (!module) {
         const availableModules = await this.moduleRepository.find({
-          select: ['id', 'name'], // Faqat id va name maydonlarini tanlash
+          select: ['id', 'name'], 
         });
         return {
           statusCode: 404,

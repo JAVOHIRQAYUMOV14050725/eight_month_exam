@@ -45,7 +45,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"ali@gmail.com\",\r\n    \"password\":\"alibek\"\r\n}",
+							"raw": "{\r\n    \"email\":\"Azam@gmail.com\",\r\n    \"password\":\"alibek\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -158,7 +158,7 @@
 					"response": []
 				},
 				{
-					"name": "get All users",
+					"name": "get All users   bu route admin va teacher uchun ochiq",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -188,10 +188,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "bu route loyihaning eng asosiy ildizi hisoblanadi"
 		},
 		{
-			"name": "Lesson",
+			"name": "lesson",
 			"item": [
 				{
 					"name": "lesson update",
@@ -352,10 +353,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Lesson bu routening asosiy qismini teacher bajaradi post , patch ,delete ---get ni esa student ham qiloladi ammo obuna bo'lishi kerak u ko'rish uhun ham"
 		},
 		{
-			"name": "teachers",
+			"name": "teacher",
 			"item": [
 				{
 					"name": "teacher get all",
@@ -515,7 +517,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "teachers ustida istalgan route admin uchun ochiq qolgan hech kimga mumkin emas"
 		},
 		{
 			"name": "course",
@@ -728,7 +731,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "course Lesson bu routening asosiy qismini teacher bajaradi post , patch ,delete ---get ni esa student ham qiloladi va uumuman ro'yhatdan o'tmagan bo'lsa ham ko'raoladigan route bor"
 		},
 		{
 			"name": "enrollment",
@@ -830,7 +834,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "StartFragmentenrollment bu routening post va delete qismini istalgan registratsiyadan o'tgan user qilaoladi faqat o'zinikini getni esa admin va teacher va student ko'raoladi.--------student ko'raolishining bitta farqi faqat o'zining obunalarini ko'raoladi"
 		},
 		{
 			"name": "module",
@@ -1003,10 +1008,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "module routening asosiy qismini teacher qilaoladi bular post patch delete qolgan routelarini registratsiya bo'lgan userlar uchun ochiq"
 		},
 		{
-			"name": "assignment",
+			"name": "Assignment",
 			"item": [
 				{
 					"name": "create assignment to  module",
@@ -1151,8 +1157,60 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update assignmnet",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/modules/assignment/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"assignment",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjk5NDcyLCJleHAiOjE3MzAzODU4NzJ9.QL_6YRNi0MSPX4TmRGz4T4eIgAysOPs17zkWQn_rUZA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/assignment/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"assignment",
+								"6"
+							]
+						}
+					},
+					"response": []
 				}
-			]
+			],
+			"description": "assignment routening post , patch, deleteni qismini teacher qilaoladi qolgan routelarini registratsiya bo'lgan userlar uchun ochiq"
 		},
 		{
 			"name": "submission yani bu result desak ham bo'laveradi",
@@ -1263,7 +1321,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Submissionlar table bu result ham ichida namoyon bo'lgan postni student qiloladi ,\n\nupdateni esa student qilaoladi faqat teacher baholab bo'lguncha qilaolsa agar teacher baho qo'yib bo'lgan bo'lsa o'zgartiraolmaydi,\n\ngetni esa student ham o'zining resultlarini baholanmaganlarini va ishlamaganlarini ko'raoladi .\n\nbu amalni teacher ham qilaoladi faqat teacher hammasini ko'raoladi"
 		}
 	]
 }

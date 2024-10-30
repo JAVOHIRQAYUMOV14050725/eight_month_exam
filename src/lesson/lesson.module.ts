@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { LessonController } from './lesson.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Lesson } from './entities/lesson.entity';
-import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { Modules } from 'src/module/entities/module.entity';
+import { Modules } from '../module/entities/module.entity';
 import { LessonService } from './lesson.service';
-import { Assignment } from 'src/assignment/entities/assignment.entity';
+import { Assignment } from '../assignment/entities/assignment.entity';
 
 @Module({
   imports: [

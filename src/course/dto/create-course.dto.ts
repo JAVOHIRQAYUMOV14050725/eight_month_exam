@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsOptional, IsDecimal, IsPositive, MaxLength, IsEnum, IsNumber } from 'class-validator';
-import { CourseLevel } from 'src/enums/course.level.enum';
+import { CourseLevel } from '../../enums/course.level.enum';
 
 export class CreateCourseDto {
     @IsNotEmpty({ message: 'Course name is required' })

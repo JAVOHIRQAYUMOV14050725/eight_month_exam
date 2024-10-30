@@ -2,10 +2,9 @@ import { User_Role } from './../enums/user.role.enum';
 import { Controller, Post, Body, UseGuards, Headers, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { User } from 'src/user/entities/user.entity';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { AuthGuard } from '../guards/auth.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +32,7 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(@Headers('authorization') authorizationHeader: string) {
     const tokens = authorizationHeader.split(' ');
-    const refreshToken = tokens[2]; 
+    const refreshToken = tokens[2];
     return this.authService.refreshToken(refreshToken);
   }
 

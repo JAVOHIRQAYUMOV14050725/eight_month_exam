@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
-import { Modules } from 'src/module/entities/module.entity';
-import { User } from 'src/user/entities/user.entity';
-import { CourseLevel } from 'src/enums/course.level.enum';
+import { Enrollment } from '../../enrollment/entities/enrollment.entity';
+import { Modules } from '../../module/entities/module.entity';
+import { User } from '../../user/entities/user.entity';
+import { CourseLevel } from '../../enums/course.level.enum';
 
 @Entity()
 export class Course {

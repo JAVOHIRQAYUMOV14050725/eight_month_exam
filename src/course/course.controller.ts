@@ -2,14 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Forbidden
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { User_Role } from 'src/enums/user.role.enum';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { User_Role } from '../enums/user.role.enum';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
 
 
 @Controller('course')
 export class CourseController {
+
+
+
   constructor(private readonly courseService: CourseService) { }
 
   @Post()

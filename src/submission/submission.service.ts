@@ -10,8 +10,8 @@ import { Repository } from 'typeorm';
 import { Submission } from './entities/submission.entity';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
-import { Assignment } from 'src/assignment/entities/assignment.entity';
-import { User_Role } from 'src/enums/user.role.enum';
+import { Assignment } from '../assignment/entities/assignment.entity';
+import { User_Role } from '../enums/user.role.enum';
 
 @Injectable()
 export class SubmissionService {

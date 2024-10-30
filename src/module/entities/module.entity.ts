@@ -1,6 +1,6 @@
-import { Assignment } from 'src/assignment/entities/assignment.entity';
-import { Course } from 'src/course/entities/course.entity';
-import { Lesson } from 'src/lesson/entities/lesson.entity';
+import { Assignment } from '../../assignment/entities/assignment.entity';
+import { Course } from '../../course/entities/course.entity';
+import { Lesson } from '../../lesson/entities/lesson.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity()

@@ -1,7 +1,7 @@
-import { Course } from 'src/course/entities/course.entity';
-import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
-import { User_Role } from 'src/enums/user.role.enum';
-import { Submission } from 'src/submission/entities/submission.entity';
+import { Course } from '../../course/entities/course.entity';
+import { Enrollment } from '../../enrollment/entities/enrollment.entity';
+import { User_Role } from '../../enums/user.role.enum';
+import { Submission } from '../../submission/entities/submission.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 
 @Entity()

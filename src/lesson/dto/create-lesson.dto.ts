@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsEnum, IsInt, Length, IsOptional } from 'class-validator';
-import { content_type } from 'src/enums/lesson.contentType.enum';
+import { content_type } from '../../enums/lesson.contentType.enum';
 
 export class CreateLessonDto {
   @IsNotEmpty({ message: 'title should not be empty' })

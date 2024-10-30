@@ -1,5 +1,5 @@
-import { Assignment } from 'src/assignment/entities/assignment.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Assignment } from '../../assignment/entities/assignment.entity';
+import { User } from '../../user/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
 
 @Entity()

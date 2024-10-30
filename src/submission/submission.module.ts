@@ -3,7 +3,7 @@ import { SubmissionService } from './submission.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Submission } from './entities/submission.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { Assignment } from 'src/assignment/entities/assignment.entity';
+import { Assignment } from '../assignment/entities/assignment.entity';
 import { SubmissionController } from './submission.controller';
 
 @Module({

@@ -4,9 +4,9 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lesson } from './entities/lesson.entity';
 import { Repository } from 'typeorm';
-import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
-import { Modules } from 'src/module/entities/module.entity';
-import { User_Role } from 'src/enums/user.role.enum';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
+import { Modules } from '../module/entities/module.entity';
+import { User_Role } from '../enums/user.role.enum';
 
 @Injectable()
 export class LessonService {
@@ -16,7 +16,7 @@ export class LessonService {
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
     @InjectRepository(Modules)
-    private readonly moduleRepository: Repository<Modules>, // Module repository inject qilinmoqda
+    private readonly moduleRepository: Repository<Modules>,
   ) { }
 
   async create(createLessonData: CreateLessonDto): Promise<{ statusCode: number, message: string, data?: Lesson }> {

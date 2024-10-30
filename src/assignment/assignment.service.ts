@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Assignment } from './entities/assignment.entity';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
-import { Modules } from 'src/module/entities/module.entity';
+import { Modules } from '../module/entities/module.entity';
 
 @Injectable()
 export class AssignmentService {

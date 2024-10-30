@@ -5,8 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { Enrollment } from './entities/enrollment.entity';
 import { EnrollmentController } from './enrollment.controller';
 import { EnrollmentService } from './enrollment.service';
-import { Course } from 'src/course/entities/course.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Course } from '../course/entities/course.entity';
+import { User } from '../user/entities/user.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),

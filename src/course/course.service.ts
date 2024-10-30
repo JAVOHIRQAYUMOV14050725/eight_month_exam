@@ -11,8 +11,8 @@
   import { Course } from './entities/course.entity';
   import { InjectRepository } from '@nestjs/typeorm';
   import { Repository } from 'typeorm';
-  import { Modules } from 'src/module/entities/module.entity';
-  import { Lesson } from 'src/lesson/entities/lesson.entity';
+  import { Modules } from '../module/entities/module.entity';
+  import { Lesson } from '../lesson/entities/lesson.entity';
 
   @Injectable()
   export class CourseService {

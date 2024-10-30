@@ -2,10 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Inte
 import { ModuleService } from './module.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { User_Role } from 'src/enums/user.role.enum';
-import { Roles } from 'src/decorators/roles.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { User_Role } from '../enums/user.role.enum';
+import { Roles } from '../decorators/roles.decorator';
 
 @Controller('module')
 @UseGuards(AuthGuard, RolesGuard)

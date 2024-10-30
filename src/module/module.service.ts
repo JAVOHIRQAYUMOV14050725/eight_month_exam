@@ -8,6 +8,13 @@ import { Course } from '../course/entities/course.entity';
 
 @Injectable()
 export class ModuleService {
+  save(moduleData: { name: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  findAll() {
+    throw new Error('Method not implemented.');
+  }
+
 
   constructor(
     @InjectRepository(Modules)

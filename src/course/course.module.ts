@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { Modules } from 'src/module/entities/module.entity';
-import { Lesson } from 'src/lesson/entities/lesson.entity';
+import { Modules } from '../module/entities/module.entity';
+import { Lesson } from '../lesson/entities/lesson.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -18,5 +18,6 @@ import { Lesson } from 'src/lesson/entities/lesson.entity';
   ],
   controllers: [CourseController],
   providers: [CourseService],
+  exports: [CourseService],
 })
 export class CourseModule { }

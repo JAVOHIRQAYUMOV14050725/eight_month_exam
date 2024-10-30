@@ -2,10 +2,10 @@ import { Controller, Post, Get, Patch, Param, Body, UseGuards, Req } from '@nest
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { User_Role } from 'src/enums/user.role.enum';
-import { Roles } from 'src/decorators/roles.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { User_Role } from '../enums/user.role.enum';
+import { Roles } from '../decorators/roles.decorator';
 
 @Controller('submissions')
 export class SubmissionController {

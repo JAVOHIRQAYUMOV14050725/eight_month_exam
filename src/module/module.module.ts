@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Modules } from './entities/module.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { Course } from 'src/course/entities/course.entity';
+import { Course } from '../course/entities/course.entity';
 
 @Module({
   imports: [

@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Enrollment } from './entities/enrollment.entity';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
-import { Course } from 'src/course/entities/course.entity';
-import { User } from 'src/user/entities/user.entity';
-import { User_Role } from 'src/enums/user.role.enum';
+import { Course } from '../course/entities/course.entity';
+import { User } from '../user/entities/user.entity';
+import { User_Role } from '../enums/user.role.enum';
 
 @Injectable()
 export class EnrollmentService {

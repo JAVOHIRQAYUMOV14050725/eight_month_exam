@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { RolesGuard } from './guards/roles.guard';
+import { Reflector } from '@nestjs/core'; // Import Reflector
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Global validation pipes
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -20,6 +24,8 @@ async function bootstrap() {
       },
     }),
   );
+
+ 
 
   await app.listen(3000);
 }

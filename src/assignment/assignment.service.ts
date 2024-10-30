@@ -19,7 +19,10 @@ export class AssignmentService {
     try {
       const module = await this.moduleRepository.findOne({ where: { id: moduleId } });
       if (!module) {
-        throw new NotFoundException(`Module ${moduleId} not found`);
+        const availableModules = await this.moduleRepository.find();
+        throw new NotFoundException(
+          `Module ${moduleId} not found. Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+        );
       }
       const assignment = this.assignmentRepository.create({
         ...createAssignmentDto,
@@ -44,7 +47,7 @@ export class AssignmentService {
 
   async findOne(id: number): Promise<Assignment> {
     try {
-      const assignment = await this.assignmentRepository.findOne({ where: { id } });
+      const assignment = await this.assignmentRepository.findOne({ where: { id }, relations: ['module'] });
       if (!assignment) {
         throw new NotFoundException(`Assignment with ID ${id} not found`);
       }
@@ -60,6 +63,15 @@ export class AssignmentService {
       if (!assignment) {
         throw new NotFoundException(`Assignment with ID ${id} not found`);
       }
+
+      const module = await this.moduleRepository.findOne({ where: { id: assignment.module.id } });
+      if (!module) {
+        const availableModules = await this.moduleRepository.find();
+        throw new NotFoundException(
+          `Module ${assignment.module.id} not found. Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+        );
+      }
+
       Object.assign(assignment, updateAssignmentDto);
       return await this.assignmentRepository.save(assignment);
     } catch (error) {
@@ -73,6 +85,15 @@ export class AssignmentService {
       if (!assignment) {
         throw new NotFoundException(`Assignment with ID ${id} not found`);
       }
+
+      const module = await this.moduleRepository.findOne({ where: { id: assignment.module.id } });
+      if (!module) {
+        const availableModules = await this.moduleRepository.find();
+        throw new NotFoundException(
+          `Module ${assignment.module.id} not found. Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+        );
+      }
+
       await this.assignmentRepository.remove(assignment);
     } catch (error) {
       throw new InternalServerErrorException('Failed to delete assignment', error.message);

@@ -26,5 +26,7 @@ export class Assignment {
 
     @OneToMany(() => Lesson, (lesson) => lesson.assignment)
     lessons: Lesson[];
+  title: any;
+  dueDate: any;
    
 }

@@ -14,7 +14,7 @@ export class CourseController {
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(User_Role.Admin)
   async create(@Body() createCourseDto: CreateCourseDto) {
     return this.courseService.create(createCourseDto);
   }
@@ -22,7 +22,7 @@ export class CourseController {
   @Get()
   @UseGuards(AuthGuard)
   async findAllWithAuth(@Req() req: any) {
-    return this.courseService.findAll(true);
+    return this.courseService.findAll(true);  
   }
 
   @Get('public')
@@ -54,14 +54,14 @@ export class CourseController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(User_Role.Admin)
   async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
     return this.courseService.update(+id, updateCourseDto, true);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(User_Role.Admin)
   async remove(@Param('id') id: string) {
     return this.courseService.remove(+id, true);
   }

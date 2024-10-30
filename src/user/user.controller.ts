@@ -3,39 +3,42 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { User_Role } from 'src/enums/user.role.enum';
 
 @Controller('teacher')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post('create')
-  async create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
-    return await this.userService.create(createUserDto, req.user);
-  }
-
-  @Get('me')
-  async getMe(@Req() req: any) {
-    return req.user; 
+  @Roles(User_Role.Admin)
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
   }
 
   @Get('getAll')
-  async findAll(@Req() req: any) {
-    return await this.userService.findAll(req.user);
+  @Roles(User_Role.Admin)
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Req() req: any) {
-    return await this.userService.findOne(+id, req.user);
+  @Roles(User_Role.Admin)
+  async findOne(@Param('id') id: string) {
+    return await this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() req: any) {
-    return await this.userService.update(+id, updateUserDto, req.user);
+  @Roles(User_Role.Admin)
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: any) {
-    return await this.userService.remove(+id, req.user);
+  @Roles(User_Role.Admin)
+  async remove(@Param('id') id: string) {
+    return await this.userService.remove(+id);
   }
 }

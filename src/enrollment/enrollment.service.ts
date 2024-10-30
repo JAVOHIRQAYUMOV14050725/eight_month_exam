@@ -19,19 +19,26 @@ export class EnrollmentService {
   ) { }
 
   async create(createEnrollmentDto: CreateEnrollmentDto, req: any) {
-    const userId = req.user.id;
+    const userId = req.user.id; 
     const { courseId } = createEnrollmentDto;
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user || ![User_Role.Student, User_Role.Teacher, User_Role.Admin].includes(user.role)) {
-      throw new ForbiddenException(
-        'You must be a student, teacher, or admin to enroll in a course',
-      );
+      throw new ForbiddenException('You must be a student, teacher, or admin to enroll in a course');
     }
 
     const course = await this.courseRepository.findOne({ where: { id: courseId } });
+
     if (!course) {
-      throw new NotFoundException('Course not found');
+      const allCourses = await this.courseRepository.find();
+      if (allCourses.length === 0) {
+        throw new NotFoundException('No courses available.');
+      }
+
+      return {
+        message: 'Course not found. Here are the available courses:',
+        courses: allCourses.map(c => ({ id: c.id, name: c.name })),
+      };
     }
 
     const isAlreadyEnrolled = await this.enrollmentRepository.findOne({
@@ -42,23 +49,35 @@ export class EnrollmentService {
       return { message: 'You are already enrolled in this course', data: isAlreadyEnrolled };
     }
 
-    // Ro'yxatdan o'tish
     const enrollment = this.enrollmentRepository.create({
-      student: user,
+      student: user, 
       course,
       enrolledAt: new Date(),
     });
 
-    return await this.enrollmentRepository.save(enrollment);
+    try {
+      const savedEnrollment = await this.enrollmentRepository.save(enrollment);
+      return {
+        message: 'Enrollment successfully created',
+        data: {
+          id: savedEnrollment.id,
+          course: savedEnrollment.course,
+          enrolledAt: savedEnrollment.enrolledAt, 
+        },
+      };
+    } catch (error) {
+      throw new ConflictException('Failed to create enrollment, please try again');
+    }
   }
+
+
 
   async findAll(req: any) {
     const userId = req.user.id;
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
-    if (user.role === User_Role.Admin) {
+    if (user.role === User_Role.Admin || user.role === User_Role.Teacher) {
       const enrollments = await this.enrollmentRepository.find({ relations: ['student', 'course'] });
-
       return enrollments.map(enrollment => {
         const { password, refreshToken, ...studentWithoutSensitiveData } = enrollment.student;
         return {
@@ -66,56 +85,52 @@ export class EnrollmentService {
           student: studentWithoutSensitiveData,
         };
       });
-    } else if (user.role === User_Role.Student) {
-      const enrollments = await this.enrollmentRepository.find({
-        where: { student: { id: userId } },
-        relations: ['course'],
-      });
-
-      return enrollments.map(enrollment => ({
-        ...enrollment,
-        student: { id: userId },
-      }));
-    } else {
-      throw new ForbiddenException('You do not have permission to access this resource');
-    }
-  }
-
-  async findOne(id: number, req: any) {
-    const userId = req.user.id;
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-
-    if (!user || user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only admin can access this resource');
     }
 
-    const enrollment = await this.enrollmentRepository.findOne({
-      where: { id },
-      relations: ['student', 'course'],
+    // Faqat student o'z obunalarini ko'radi
+    const enrollments = await this.enrollmentRepository.find({
+      where: { student: { id: userId } },
+      relations: ['course'],
     });
 
-    if (!enrollment) {
-      throw new NotFoundException(`Enrollment with ID ${id} not found`);
+    return enrollments.map(enrollment => ({
+      ...enrollment,
+      student: { id: userId }, // Bu yerda foydalanuvchi ID sini qaytaramiz
+    }));
+  }
+
+  async remove(courseId: number, req: any) {
+    const userId = req.user.id;
+
+    // Foydalanuvchining obunalari
+    const enrollments = await this.enrollmentRepository.find({
+      where: { student: { id: userId } },
+      relations: ['course'],
+    });
+
+    if (enrollments.length === 0) {
+      throw new NotFoundException('You are not enrolled in any courses.');
     }
 
-    const { password, refreshToken, ...studentWithoutSensitiveData } = enrollment.student;
+    const enrollment = enrollments.find(enrollment => enrollment.course.id === courseId);
+
+    if (!enrollment) {
+      return {
+        message: 'Enrollment not found for the provided course ID. Here are your enrolled courses:',
+        courses: enrollments.map(e => ({ id: e.course.id, name: e.course.name })),
+      };
+    }
+
+    await this.enrollmentRepository.remove(enrollment);
 
     return {
-      ...enrollment,
-      student: studentWithoutSensitiveData,
+      message: 'Enrollment successfully removed.',
+      removedCourse: {
+        id: enrollment.course.id,
+        name: enrollment.course.name,
+      },
     };
   }
 
-  async remove(id: number, studentId: number) {
-    const enrollment = await this.enrollmentRepository.findOne({
-      where: { id, student: { id: studentId } },
-      relations: ['student', 'course'],
-    });
 
-    if (!enrollment) {
-      throw new NotFoundException(`Enrollment not found or you are not enrolled`);
-    }
-
-    return await this.enrollmentRepository.remove(enrollment);
-  }
 }

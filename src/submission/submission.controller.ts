@@ -8,40 +8,29 @@ import { User_Role } from 'src/enums/user.role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('submissions')
-@UseGuards(AuthGuard, RolesGuard)
 export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) { }
 
   @Post()
-  @Roles('student')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(User_Role.Student)
   async createSubmission(@Body() createSubmissionDto: CreateSubmissionDto, @Req() req: any) {
     return this.submissionService.create(createSubmissionDto, req.user);
   }
 
-  @Get(':assignmentId')
-  async findAllByAssignment(@Param('assignmentId') assignmentId: number, @Req() req: any) {
-    return this.submissionService.findAllByAssignment(assignmentId, req.user);
-  }
+ 
 
-  @Get('submission/:id')
-  async findOneById(@Param('id') id: number, @Req() req: any) {
-    return this.submissionService.findOneById(id, req.user);
-  }
-
-
-
-  @Get('student/:studentId')
-  async findAllByStudent(@Param('studentId') studentId: number, @Req() req: any) {
-    return this.submissionService.findAllByStudent(studentId);
-  }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(User_Role.Teacher, User_Role.Student)
   async updateSubmission(
     @Param('id') id: number,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
     @Req() req: any
   ) {
-    if (req.user.role === User_Role.Teacher) {
+    const userRole = req.user.role;
+    if (userRole === User_Role.Teacher) {
       return this.submissionService.update(id, updateSubmissionDto, req.user);
     } else {
       return this.submissionService.update(id, {
@@ -52,4 +41,14 @@ export class SubmissionController {
       }, req.user);
     }
   }
+
+
+  @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(User_Role.Teacher, User_Role.Student)
+  async getSubmissions(@Req() req: any) {
+    return this.submissionService.findAll(req.user);
+  }
+
+
 }

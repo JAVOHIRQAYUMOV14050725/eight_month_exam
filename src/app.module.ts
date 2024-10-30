@@ -8,7 +8,6 @@ import { LessonModule } from './lesson/lesson.module';
 import { AssignmentModule } from './assignment/assignment.module';
 import { EnrollmentModule } from './enrollment/enrollment.module';
 import { SubmissionModule } from './submission/submission.module';
-import { ResultModule } from './result/result.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
 import { Modules } from './module/entities/module.entity';
@@ -17,7 +16,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Course } from './course/entities/course.entity';
 import { Enrollment } from './enrollment/entities/enrollment.entity';
 import { Lesson } from './lesson/entities/lesson.entity';
-import { Result } from './result/entities/result.entity';
 import { Submission } from './submission/entities/submission.entity';
 import { Assignment } from './assignment/entities/assignment.entity';
 
@@ -42,7 +40,6 @@ import { Assignment } from './assignment/entities/assignment.entity';
           Enrollment,
           Lesson,
           Modules,
-          Result,
           Submission,
           Assignment
         ]
@@ -50,7 +47,7 @@ import { Assignment } from './assignment/entities/assignment.entity';
       
       inject: [ConfigService],
     }),    
-    UserModule, CourseModule, ModuleModule, LessonModule, AssignmentModule, EnrollmentModule, SubmissionModule, ResultModule, AuthModule],
+    UserModule, CourseModule, ModuleModule, LessonModule, AssignmentModule, EnrollmentModule, SubmissionModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

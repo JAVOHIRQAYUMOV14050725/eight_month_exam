@@ -1,11 +1,11 @@
-import { Injectable, ForbiddenException, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { User_Role } from 'src/enums/user.role.enum';
 import * as bcrypt from 'bcrypt';
+import { User_Role } from 'src/enums/user.role.enum';
 
 @Injectable()
 export class UserService {
@@ -14,121 +14,102 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) { }
 
-
-
-  async create(createUserDto: CreateUserDto, user: any) {
-    if (user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can create other Teachers');
-    }
-
-    const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
-    if (existingUser) {
-      throw new ConflictException(`User with email ${createUserDto.email} already exists.`);
-    }
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = this.userRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-
-    newUser.refreshToken = undefined;
-    const savedUser = await this.userRepository.save(newUser);
-    delete savedUser.refreshToken;
-    return savedUser;
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto, user: any) {
-    if (user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can update other Teachers');
-    }
-
-    const existingUser = await this.userRepository.findOne({ where: { id } });
-    const existingTeachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
-
-    if (!existingUser) {
-      throw new NotFoundException(`User with ID ${id} not found. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
-    }
-
-    if (existingUser.role !== User_Role.Teacher) {
-      throw new NotFoundException(`User with ID ${id} is not a Teacher. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
-    }
-
-    if (updateUserDto.email) {
-      const existingEmailUser = await this.userRepository.findOne({ where: { email: updateUserDto.email } });
-      if (existingEmailUser && existingEmailUser.id !== id) {
-        throw new ConflictException(`Email ${updateUserDto.email} is already in use by another user.`);
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+      if (existingUser) {
+        throw new ConflictException(`User with email ${createUserDto.email} already exists.`);
       }
+
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      const newUser = this.userRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
+
+      newUser.refreshToken = undefined;
+      const savedUser = await this.userRepository.save(newUser);
+      delete savedUser.refreshToken;
+      delete savedUser.password;
+      return savedUser;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-    }
-
-    const updatedUserData = {
-      ...existingUser, 
-      ...updateUserDto,
-    };
-
-    await this.userRepository.update(id, updatedUserData); 
-    return { ...updatedUserData, refreshToken: undefined };
   }
 
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { id } });
+      if (!existingUser) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
 
+      if (updateUserDto.email) {
+        const existingEmailUser = await this.userRepository.findOne({ where: { email: updateUserDto.email } });
+        if (existingEmailUser && existingEmailUser.id !== id) {
+          throw new ConflictException(`Email ${updateUserDto.email} is already in use by another user.`);
+        }
+      }
 
+      if (updateUserDto.password) {
+        updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+      }
 
-  async findAll(user: any) {
-    if (user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can access this resource');
+      await this.userRepository.update(id, { ...existingUser, ...updateUserDto });
+      return { ...existingUser, ...updateUserDto, refreshToken: undefined };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    const users = await this.userRepository.find({ where: { role: User_Role.Teacher } });
-    return users.map(user => ({ ...user, refreshToken: undefined, password: undefined }));
   }
 
-  async findOne(id: number, user: any) {
-    if (user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admins can access this resource');
+  async findAll() {
+    try {
+      const users = await this.userRepository.find({ where: { role: User_Role.Teacher } });
+      return users.map(user => ({ ...user, refreshToken: undefined, password: undefined }));
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    const foundUser = await this.userRepository.findOne({ where: { id } });
-    const existingTeachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
-
-    if (!foundUser) {
-      throw new NotFoundException(`User with ID ${id} not found. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
-    }
-
-    if (foundUser.role !== User_Role.Teacher) {
-      throw new NotFoundException(`User with ID ${id} is not a Teacher. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
-    }
-
-    const { password, refreshToken, ...userWithoutPassword } = foundUser;
-    return userWithoutPassword;
   }
 
-
-
-  async remove(id: number, user: any) {
-    if (user.role !== User_Role.Admin) {
-      throw new ForbiddenException('Only Admin can delete other Teachers');
+  async findOne(id: number) {
+    try {
+      const foundUser = await this.userRepository.findOne({ where: { id } });
+      if (!foundUser) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+      const { password, refreshToken, ...userWithoutSensitiveData } = foundUser;
+      return userWithoutSensitiveData;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
 
-    const existingUser = await this.userRepository.findOne({ where: { id } });
-    const existingTeachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
+  async remove(id: number) {
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { id } });
+      if (!existingUser) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
 
-    if (!existingUser) {
-      throw new NotFoundException(`User with ID ${id} not found. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
+      await this.userRepository.delete(id);
+      return `User with ID #${id} has been removed.`;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    if (existingUser.role !== User_Role.Teacher) {
-      throw new NotFoundException(`User with ID ${id} is not a Teacher. Existing Teacher IDs: ${existingTeachers.map(user => user.id).join(', ')}`);
-    }
-
-    const deleteResult = await this.userRepository.delete(id);
-    if (!deleteResult.affected) {
-      throw new NotFoundException(`User with ID ${id} could not be deleted`);
-    }
-
-    return `This action removes a user with ID #${id}`;
   }
 }

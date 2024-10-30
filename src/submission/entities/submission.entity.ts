@@ -4,24 +4,30 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } f
 
 @Entity()
 export class Submission {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(() => Assignment, (assignment) => assignment.submissions, { onDelete: 'CASCADE' })
-    assignment: Assignment; 
+  @ManyToOne(() => Assignment, (assignment) => assignment.submissions, { onDelete: 'CASCADE' })
+  assignment: Assignment;
 
-    @ManyToOne(() => User, (user) => user.submissions, { onDelete: 'CASCADE' })
-    student: User;
+  @ManyToOne(() => User, (user) => user.submissions, { onDelete: 'CASCADE' })
+  student: User;
 
-    @Column({ nullable: true })
-    score: number;
+  @Column({ nullable: true })
+  score: number;
 
-    @Column({ type: 'text', nullable: true })
-    feedback: string;
+  @Column({ type: 'text', nullable: true })
+  feedback: string;
 
-    @CreateDateColumn()
+  @CreateDateColumn()
   submissionDate: Date;
 
-  @Column({type:'text'})
+  @Column({ type: 'text' })
   content: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  teacher: User;
+
+  @Column({ default: false })
+  isGraded: boolean;
 }

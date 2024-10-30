@@ -13,7 +13,7 @@ export class ModuleController {
   constructor(private readonly moduleService: ModuleService) { }
 
   @Post()
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async create(@Body() createModuleDto: CreateModuleDto, @Req() req) {
     try {
       return await this.moduleService.create(createModuleDto, req.user);
@@ -50,7 +50,7 @@ export class ModuleController {
   }
 
   @Patch(':id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async update(@Param('id') id: string, @Body() updateModuleDto: UpdateModuleDto, @Req() req) {
     try {
       return await this.moduleService.update(+id, updateModuleDto, req.user);
@@ -60,7 +60,7 @@ export class ModuleController {
   }
 
   @Delete(':id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async remove(@Param('id') id: string, @Req() req) {
     try {
       return await this.moduleService.remove(+id, req.user);

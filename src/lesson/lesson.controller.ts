@@ -1,10 +1,10 @@
+import { User_Role } from './../enums/user.role.enum';
 import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
-import { User_Role } from 'src/enums/user.role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('lesson')
@@ -13,7 +13,7 @@ export class LessonController {
   constructor(private readonly lessonService: LessonService) { }
 
   @Post('create')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async createLesson(
     @Body() createLessonDto: CreateLessonDto
   ) {
@@ -31,7 +31,7 @@ export class LessonController {
   }
 
   @Patch(':id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async updateLesson(
     @Param('id') id: number,
     @Body() updateLessonDto: UpdateLessonDto
@@ -40,7 +40,7 @@ export class LessonController {
   }
 
   @Delete(':id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async deleteLesson(@Param('id') id: number) {
     return this.lessonService.remove(id);
   }

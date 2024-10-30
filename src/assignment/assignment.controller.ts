@@ -5,6 +5,7 @@ import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { User_Role } from 'src/enums/user.role.enum';
 
 @Controller('modules')
 @UseGuards(AuthGuard, RolesGuard)
@@ -12,7 +13,7 @@ export class AssignmentController {
   constructor(private readonly assignmentService: AssignmentService) { }
 
   @Post(':moduleId/assignment')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async createAssignment(
     @Param('moduleId') moduleId: string,
     @Body() createAssignmentDto: CreateAssignmentDto
@@ -44,7 +45,7 @@ export class AssignmentController {
   }
 
   @Patch('assignment/:id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async updateAssignment(
     @Param('id') id: string,
     @Body() updateAssignmentDto: UpdateAssignmentDto
@@ -57,7 +58,7 @@ export class AssignmentController {
   }
 
   @Delete('assignment/:id')
-  @Roles('teacher')
+  @Roles(User_Role.Teacher)
   async deleteAssignment(@Param('id') id: string) {
     const parsedId = parseInt(id, 10);
     if (isNaN(parsedId)) {

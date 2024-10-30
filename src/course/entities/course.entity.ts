@@ -3,7 +3,6 @@ import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { Modules } from 'src/module/entities/module.entity';
 import { User } from 'src/user/entities/user.entity';
 import { CourseLevel } from 'src/enums/course.level.enum';
-import { Result } from 'src/result/entities/result.entity';
 
 @Entity()
 export class Course {
@@ -40,7 +39,4 @@ export class Course {
 
     @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { onDelete: 'CASCADE' })
     enrollments: Enrollment[];
-
-    @OneToMany(() => Result, (result) => result.course, { onDelete: 'CASCADE' })  
-    results: Result[];
 }

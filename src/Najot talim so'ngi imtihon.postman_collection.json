@@ -1,0 +1,1328 @@
+{
+	"info": {
+		"_postman_id": "5e967c04-a08e-43c1-9ac1-fe04982f00a7",
+		"name": "Najot talim so'ngi imtihon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37223277"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Azam\",\r\n    \"email\":\"Azam@gmail.com\",\r\n    \"password\":\"alibek\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"Azam@gmail.com\",\r\n    \"password\":\"alibek\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoiQXphbUBnbWFpbC5jb20iLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTczMDI3NjE0NiwiZXhwIjoxNzMwMzYyNTQ2fQ.HoR6jznqfOmtJgLTaFMfPBIGlitoPyuapsEBZUiUaPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJvbGljZG1AZ21haWwuY29tIiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3MzAxMzMyOTEsImV4cCI6MTczMDIxOTY5MX0.eb1NPkpOTPcGQOXaFPdD7KSxovdQdsLz7Jx6TkeU2yg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/refresh-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getme",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjk5NDcyLCJleHAiOjE3MzAzODU4NzJ9.QL_6YRNi0MSPX4TmRGz4T4eIgAysOPs17zkWQn_rUZA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get All users   bu route admin va teacher uchun ochiq",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjk5NDcyLCJleHAiOjE3MzAzODU4NzJ9.QL_6YRNi0MSPX4TmRGz4T4eIgAysOPs17zkWQn_rUZA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/users/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "bu route loyihaning eng asosiy ildizi hisoblanadi"
+		},
+		{
+			"name": "lesson",
+			"item": [
+				{
+					"name": "lesson update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Dars Sarlavhasi\",\r\n  \"contentType\": \"video\",\r\n  \"content\": \"https://example.com/video.mp4\",\r\n  \"moduleId\": 2\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/lesson/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lesson",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lesson get by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/lesson/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lesson",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lesson delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/lesson/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lesson",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lesson create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"nodejs haqida asosiy tushunchalar 1-dars\",\r\n    \"contentType\":\"text\",\r\n    \"content\":\"mana bu nqationdan foydalanib ishlang\",\r\n    \"moduleId\":2\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/lesson/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lesson",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/lesson/2/onCourse",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lesson",
+								"2",
+								"onCourse"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Lesson bu routening asosiy qismini teacher bajaradi post , patch ,delete ---get ni esa student ham qiloladi ammo obuna bo'lishi kerak u ko'rish uhun ham"
+		},
+		{
+			"name": "teacher",
+			"item": [
+				{
+					"name": "teacher get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/teacher/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teacher",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "teacher create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Shahlo\",\r\n    \"email\":\"Shahlo@gmail.com\",\r\n    \"password\":\"alibek\",\r\n    \"role\":\"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/teacher/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teacher",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id teacher",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/teacher/20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teacher",
+								"20"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete teacher",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Hasanjon\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/teacher/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teacher",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete teacher",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/teacher/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teacher",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "teachers ustida istalgan route admin uchun ochiq qolgan hech kimga mumkin emas"
+		},
+		{
+			"name": "course",
+			"item": [
+				{
+					"name": "course getAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJvbGljZG1AZ21haWwuY29tIiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3MzAxMzMyOTEsImV4cCI6MTczMDIxOTY5MX0.eb1NPkpOTPcGQOXaFPdD7KSxovdQdsLz7Jx6TkeU2yg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/course",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI5OTQ5MTQxLCJleHAiOjE3Mjk5NTAwNDF9.eF0Zu41qHOcjPR1UzBzLisjrNqWpQ9fj5iHVXXAw4ZU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Backend\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/course/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Frontend\",\r\n    \"description\":\"bu dasturlashning ko'rinish  qismi \",\r\n    \"price\":4000000,\r\n    \"category\":\"Dasturlash\",\r\n    \"level\":\"o'rta\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/course",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/course/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course byid modules",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/course/4/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course",
+								"4",
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course barcha uchun korinishi mumkin bo'lgan malumotlar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/course/public",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course",
+								"public"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course get by id barcha uchun korinishi mumkin bo'lgan malumotlar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/course/2/public",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"course",
+								"2",
+								"public"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "course Lesson bu routening asosiy qismini teacher bajaradi post , patch ,delete ---get ni esa student ham qiloladi va uumuman ro'yhatdan o'tmagan bo'lsa ham ko'raoladigan route bor"
+		},
+		{
+			"name": "enrollment",
+			"item": [
+				{
+					"name": "get all enrollment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/enrollment",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enrollment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create enrollment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjA3NjU4LCJleHAiOjE3MzAyOTQwNTh9.MlwYSiIMLULF-NbzktH8xKgUM0URmoO1e0cHwC0IPs4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":4\r\n    \r\n\r\n\r\n\r\n\r\n\r\n\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/enrollment",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enrollment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete enrollment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJvbGljZG1AZ21haWwuY29tIiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3MzAxMzMyOTEsImV4cCI6MTczMDIxOTY5MX0.eb1NPkpOTPcGQOXaFPdD7KSxovdQdsLz7Jx6TkeU2yg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/enrollment/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enrollment",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "StartFragmentenrollment bu routening post va delete qismini istalgan registratsiyadan o'tgan user qilaoladi faqat o'zinikini getni esa admin va teacher va student ko'raoladi.--------student ko'raolishining bitta farqi faqat o'zining obunalarini ko'raoladi"
+		},
+		{
+			"name": "module",
+			"item": [
+				{
+					"name": "module getbyid",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/module/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"module",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "module create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Angular\",\r\n    \"courseId\":4\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/module",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"module"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "module update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDA0ODg2MywiZXhwIjoxNzMwMTM1MjYzfQ.s-CFsLc_nPs-5BkN31aGCzWOm34j8scOQFXrn5vbB9Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"nestJS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/module/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"module",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "module delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDA0ODg2MywiZXhwIjoxNzMwMTM1MjYzfQ.s-CFsLc_nPs-5BkN31aGCzWOm34j8scOQFXrn5vbB9Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/module/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"module",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "moduleById lessons",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiU2hhaGxvQGdtYWlsLmNvbSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzMwMjgxNzU3LCJleHAiOjE3MzAzNjgxNTd9.rsuv_s5X6jbDgJa0XsTukyR4o6o5ij3zdybUsbfQV2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/module/2/lessons",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"module",
+								"2",
+								"lessons"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "module routening asosiy qismini teacher qilaoladi bular post patch delete qolgan routelarini registratsiya bo'lgan userlar uchun ochiq"
+		},
+		{
+			"name": "Assignment",
+			"item": [
+				{
+					"name": "create assignment to  module",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDIxMDg5NSwiZXhwIjoxNzMwMjk3Mjk1fQ.Kvj3x_v7u5jjUJskUJdcgDkosxH_clLMgMnRyhG7mF4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"description\": \"mana bu savollarga nationda savollarga javob yozish.\",\r\n  \"maxScore\": 100\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/modules/2/assignment",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"2",
+								"assignment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get assignment to  module",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDIxMDg5NSwiZXhwIjoxNzMwMjk3Mjk1fQ.Kvj3x_v7u5jjUJskUJdcgDkosxH_clLMgMnRyhG7mF4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"description\": \"Assignment description goes here\",\r\n  \"maxScore\": 100\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/modules/2/assignments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"2",
+								"assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById assignment of module",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDIxMDg5NSwiZXhwIjoxNzMwMjk3Mjk1fQ.Kvj3x_v7u5jjUJskUJdcgDkosxH_clLMgMnRyhG7mF4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/assignment/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"assignment",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get assignment of module Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDIxMDg5NSwiZXhwIjoxNzMwMjk3Mjk1fQ.Kvj3x_v7u5jjUJskUJdcgDkosxH_clLMgMnRyhG7mF4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/40/assignments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"40",
+								"assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update assignmnet",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/modules/assignment/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"assignment",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMjk5NDcyLCJleHAiOjE3MzAzODU4NzJ9.QL_6YRNi0MSPX4TmRGz4T4eIgAysOPs17zkWQn_rUZA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/assignment/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"assignment",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "assignment routening post , patch, deleteni qismini teacher qilaoladi qolgan routelarini registratsiya bo'lgan userlar uchun ochiq"
+		},
+		{
+			"name": "submission yani bu result desak ham bo'laveradi",
+			"item": [
+				{
+					"name": "student vazifasini jo'natish qismi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoiQXphbUBnbWFpbC5jb20iLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTczMDIyMTMzMSwiZXhwIjoxNzMwMzA3NzMxfQ.MHTJFpdd7TRDOdB4PY4DujW9koFGyrrnq7I_KBfgoN0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"assignmentId\":2,\r\n    \"content\":\"mana mening nationim  https://sunrise-waste-11b.notion.site/Ubuntu-Linux-komandalar-129e6f6903d380cfb497e3393d6764b7?pvs=4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/submissions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "teacher yoki student  update qiladi agar teacher update qilgan bo'lsa student update qilaolmaydi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJoYXNhbkBnbWFpbC5jb20iLCJyb2xlIjoidGVhY2hlciIsImlhdCI6MTczMDIxMDg5NSwiZXhwIjoxNzMwMjk3Mjk1fQ.Kvj3x_v7u5jjUJskUJdcgDkosxH_clLMgMnRyhG7mF4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"feedback\":\"ha hayot ajoyib mana shuni anglaganiz uchun\",\r\n    \"score\":95,\r\n    \"content\":\"yomonku\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/submissions/15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"submissions",
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result yani menda submissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoiQXphbUBnbWFpbC5jb20iLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTczMDIyMTMzMSwiZXhwIjoxNzMwMzA3NzMxfQ.MHTJFpdd7TRDOdB4PY4DujW9koFGyrrnq7I_KBfgoN0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/submissions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Submissionlar table bu result ham ichida namoyon bo'lgan postni student qiloladi ,\n\nupdateni esa student qilaoladi faqat teacher baholab bo'lguncha qilaolsa agar teacher baho qo'yib bo'lgan bo'lsa o'zgartiraolmaydi,\n\ngetni esa student ham o'zining resultlarini baholanmaganlarini va ishlamaganlarini ko'raoladi .\n\nbu amalni teacher ham qilaoladi faqat teacher hammasini ko'raoladi"
+		}
+	]
+}

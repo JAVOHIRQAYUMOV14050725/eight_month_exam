@@ -25,16 +25,16 @@ export class LessonController {
   @Get(':courseId/:id')
   async findOne(
     @Param('id') id: string,
-    @Param('courseId') courseId: string, 
+    @Param('courseId') courseId: string,
     @Req() req: any
   ) {
     const userRole = req.user.role;
-    return this.lessonService.findOne(Number(id), req.user.id, Number(courseId), userRole); 
+    return this.lessonService.findOne(Number(id), req.user.id, Number(courseId), userRole);
   }
 
 
   @Patch(':id')
-  @Roles(User_Role.Teacher)   
+  @Roles(User_Role.Teacher)
   async updateLesson(
     @Param('id') id: number,
     @Body() updateLessonDto: UpdateLessonDto

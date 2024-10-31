@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException, Inject,  } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, Inject, } from '@nestjs/common';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -73,7 +73,7 @@ export class ModuleService {
         message: `Lessons for module ${moduleId} successfully fetched`,
         data: module.lessons,
       };
-      await this.cacheManager.set(cacheKey, response,3600);
+      await this.cacheManager.set(cacheKey, response, 3600);
 
       return response;
     } catch (error) {

@@ -18,7 +18,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       signOptions: { expiresIn: '1d' },
     }),
     UserModule
-  
+
   ],
   controllers: [EnrollmentController],
   providers: [EnrollmentService],

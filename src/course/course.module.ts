@@ -13,13 +13,13 @@ import { Enrollment } from '../enrollment/entities/enrollment.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([Course,Modules,Lesson,Enrollment]),
+    TypeOrmModule.forFeature([Course, Modules, Lesson, Enrollment]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
     CacheModule.register(),
-    UserModule  ],
+    UserModule],
   controllers: [CourseController],
   providers: [CourseService],
   exports: [CourseService],

@@ -22,10 +22,10 @@ export class EnrollmentController {
   @Get()
   @Roles(User_Role.Admin, User_Role.Student, User_Role.Teacher)
   async findAll(@Req() req: any) {
-    return await this.enrollmentService.findAll(req); 
+    return await this.enrollmentService.findAll(req);
   }
 
- 
+
   @Delete(':id')
   async remove(@Param('id') id: string, @Req() req: any) {
     return await this.enrollmentService.remove(+id, req);

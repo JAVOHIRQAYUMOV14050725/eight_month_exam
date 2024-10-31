@@ -20,8 +20,8 @@ import { Auth } from '../auth/entities/auth.entity';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) 
-    private readonly userRepository: Repository<User>, 
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -35,7 +35,7 @@ export class UserService {
     });
   }
 
- 
+
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -122,7 +122,7 @@ export class UserService {
         password: undefined,
       }));
 
-      await this.cacheManager.set('all_teachers', sanitizedUsers,3600);
+      await this.cacheManager.set('all_teachers', sanitizedUsers, 3600);
       return sanitizedUsers;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

@@ -6,7 +6,6 @@ import { CourseModule } from './course/course.module';
 import { ModuleModule } from './module/module.module';
 import { LessonModule } from './lesson/lesson.module';
 import { AssignmentModule } from './assignment/assignment.module';
-import { EnrollmentModule } from './enrollment/enrollment.module';
 import { SubmissionModule } from './submission/submission.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,6 +16,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './exception_filter';
 import { AuthGuard } from './guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { EnrollmentModule } from './enrollment/enrollment.module';
 
 const store = redisStore as unknown as (options?: any) => any;
 

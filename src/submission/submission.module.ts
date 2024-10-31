@@ -9,15 +9,15 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Submission,Assignment]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
-    }),
-    CacheModule.register(),
+  imports: [TypeOrmModule.forFeature([Submission, Assignment]),
+  JwtModule.register({
+    secret: process.env.JWT_SECRET,
+    signOptions: { expiresIn: '1d' },
+  }),
+  CacheModule.register(),
     UserModule
   ],
   controllers: [SubmissionController],
   providers: [SubmissionService],
 })
-export class SubmissionModule {}
+export class SubmissionModule { }

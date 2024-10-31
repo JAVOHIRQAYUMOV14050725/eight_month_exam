@@ -12,7 +12,7 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([Modules,Course]),
+    TypeOrmModule.forFeature([Modules, Course]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
@@ -23,4 +23,4 @@ import { UserModule } from 'src/user/user.module';
   controllers: [ModuleController],
   providers: [ModuleService],
 })
-export class ModuleModule {}
+export class ModuleModule { }

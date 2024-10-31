@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
     constructor(
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-        private readonly userService: UserService 
+        private readonly userService: UserService
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,5 +39,5 @@ export class AuthGuard implements CanActivate {
     }
 
 
-    
+
 }

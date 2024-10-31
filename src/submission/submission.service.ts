@@ -62,7 +62,7 @@ export class SubmissionService {
       }
 
       const updatedSubmission = await this.submissionRepository.save(submission);
-      await this.cache.set(submissionKey, updatedSubmission , 3600);
+      await this.cache.set(submissionKey, updatedSubmission, 3600);
       return this.excludeSensitiveInfo(updatedSubmission, user.role === User_Role.Teacher);
     } catch (error) {
       if (error instanceof HttpException) {

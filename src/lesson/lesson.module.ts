@@ -15,7 +15,7 @@ import { Course } from '../course/entities/course.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([Lesson, Assignment,Enrollment,Modules,Course]),
+    TypeOrmModule.forFeature([Lesson, Assignment, Enrollment, Modules, Course]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '23h' },
@@ -24,6 +24,6 @@ import { Course } from '../course/entities/course.entity';
     UserModule
   ],
   controllers: [LessonController],
-  providers:  [LessonService],
+  providers: [LessonService],
 })
 export class LessonModule { }

@@ -43,7 +43,7 @@ export class EnrollmentService {
     const isAlreadyEnrolled = await this.enrollmentRepository.findOne({
       where: {
         student: { id: Number(userId) },
-        course: { id: courseId } 
+        course: { id: courseId }
       },
     });
 
@@ -55,10 +55,10 @@ export class EnrollmentService {
     }
 
     const enrollment = this.enrollmentRepository.create({
-      student: { id: Number(userId) }, 
+      student: { id: Number(userId) },
       course,
       enrolledAt: new Date(),
-      userId: Number(userId), 
+      userId: Number(userId),
     });
 
 

@@ -11,8 +11,8 @@ import { Auth } from '../auth/entities/auth.entity';
 
 @Module({
   imports: [
-    forwardRef(() => AuthModule), 
-    TypeOrmModule.forFeature([User,Auth]),
+    forwardRef(() => AuthModule),
+    TypeOrmModule.forFeature([User, Auth]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '23h' },

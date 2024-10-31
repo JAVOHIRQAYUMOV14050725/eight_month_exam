@@ -10,7 +10,7 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    forwardRef(() => UserModule), 
+    forwardRef(() => UserModule),
     ConfigModule.forRoot(),
     TypeOrmModule.forFeature([User]),
     JwtModule.register({

@@ -22,12 +22,12 @@ export class CourseController {
   @Get()
   @UseGuards(AuthGuard)
   async findAllWithAuth(@Req() req: any) {
-    return this.courseService.findAll(true);  
+    return this.courseService.findAll(true);
   }
 
   @Get('public')
   async findAllPublic() {
-    return this.courseService.findAll(false); 
+    return this.courseService.findAll(false);
   }
 
   @Get(':id')
@@ -38,14 +38,14 @@ export class CourseController {
 
   @Get(':id/public')
   async findOnePublic(@Param('id') id: string) {
-    return await this.courseService.findOne(+id, false); 
+    return await this.courseService.findOne(+id, false);
   }
 
 
   @Get(':courseId/modules')
   @UseGuards(AuthGuard)
   async findModulesWithAuth(@Param('courseId') courseId: string, @Req() req: any) {
-    const userId = req.user.id; 
+    const userId = req.user.id;
     return this.courseService.findModulesByCourseId(+courseId, userId, true);
   }
 

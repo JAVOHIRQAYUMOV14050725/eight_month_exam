@@ -1,20 +1,20 @@
 import { Injectable, UnauthorizedException, ConflictException, ForbiddenException } from '@nestjs/common';
-  import { User } from '../user/entities/user.entity';
-  import { InjectRepository } from '@nestjs/typeorm';
-  import { Admin, Repository } from 'typeorm';
-  import { User_Role } from '../enums/user.role.enum';
-  import * as bcrypt from 'bcrypt';
-  import { JwtService } from '@nestjs/jwt';
-  import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '../user/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Admin, Repository } from 'typeorm';
+import { User_Role } from '../enums/user.role.enum';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
-  @Injectable()
-  export class AuthService {
+@Injectable()
+export class AuthService {
 
-    constructor(
-      @InjectRepository(User)
-      private readonly userRepository: Repository<User>,
-      private readonly jwtService: JwtService,
-    ) { }
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
+  ) { }
 
   async register(createUserDto: CreateUserDto): Promise<Partial<User>> {
     const { name, email, password, role } = createUserDto;
@@ -43,8 +43,8 @@ import { Injectable, UnauthorizedException, ConflictException, ForbiddenExceptio
     });
     const savedUser = await this.userRepository.save(user);
 
-    delete savedUser.password; 
-    delete savedUser.refreshToken; 
+    delete savedUser.password;
+    delete savedUser.refreshToken;
 
     return savedUser;
   }
@@ -70,7 +70,7 @@ import { Injectable, UnauthorizedException, ConflictException, ForbiddenExceptio
 
     user.refreshToken = refreshToken;
     await this.userRepository.save(user);
-    
+
 
     return { accessToken, refreshToken };
   }
@@ -87,8 +87,8 @@ import { Injectable, UnauthorizedException, ConflictException, ForbiddenExceptio
         throw new UnauthorizedException('User not found');
       }
 
-      user.refreshToken = null; 
-      await this.userRepository.save(user); 
+      user.refreshToken = null;
+      await this.userRepository.save(user);
     } catch (error) {
       throw new UnauthorizedException('Invalid access token');
     }
@@ -137,13 +137,13 @@ import { Injectable, UnauthorizedException, ConflictException, ForbiddenExceptio
     let teachers: User[] = [];
     let students: User[] = [];
     let message: string;
-    
+
 
     if (role === User_Role.Admin) {
       teachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
       students = await this.userRepository.find({ where: { role: User_Role.Student } });
 
-      
+
       message = `Mana teacherlar soni: ${teachers.length}, Mana studentlar soni: ${students.length}`;
     } else if (role === User_Role.Teacher) {
       students = await this.userRepository.find({ where: { role: User_Role.Student } });

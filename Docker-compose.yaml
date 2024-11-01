@@ -16,6 +16,13 @@ services:
     networks:
       - mynetwork
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+
   app:
     build: .
     environment:
@@ -24,8 +31,12 @@ services:
       DB_USER: postgres
       DB_PASS: 4545
       DB_NAME: online_course
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_TTL: 3600
     depends_on:
       - db
+      - redis
     ports:
       - "3000:3000"
     networks:

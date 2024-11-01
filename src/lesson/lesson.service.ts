@@ -68,6 +68,7 @@ export class LessonService {
 
   async findOne(id: number, userId: number, courseId: number, role: User_Role): Promise<{ statusCode: number, message: string, data?: Lesson | any }> {
     try {
+      // Teacher yoki Admin roli uchun cheklovlarni olib tashlash va obuna tekshirmaslik
       if (role === User_Role.Student) {
         const enrollment = await this.enrollmentRepository.findOne({
           where: { student: { id: userId }, course: { id: courseId } }
@@ -101,46 +102,35 @@ export class LessonService {
         }
       }
 
+      // Course mavjudligini tekshirish
+      const courseExists = await this.courseRepository.findOne({ where: { id: courseId } });
+      if (!courseExists) {
+        const availableCourses = await this.courseRepository.find({
+          select: ['id', 'name']
+        });
+        const coursesData = availableCourses.map(course => ({
+          id: course.id,
+          name: course.name
+        }));
+
+        return {
+          statusCode: 404,
+          message: 'Noto‘g‘ri Course ID kiritildi. Mavjud kurslar ro‘yxati:',
+          data: coursesData.length > 0 ? coursesData : [{ message: 'Kurslar hozircha mavjud emas.' }]
+        };
+      }
+
+      // Lessonni cache orqali olish yoki database dan qidirish
       let lesson = await this.getLessonFromCache(id);
-
       if (!lesson) {
-        lesson = await this.lessonRepository.findOne({ where: { id }, relations: ['module'] });
+        lesson = await this.lessonRepository.findOne({ where: { id, module: { course: { id: courseId } } }, relations: ['module'] });
 
-        // Course ni tekshirish
-        const courseExists = await this.courseRepository.findOne({ where: { id: courseId } });
-        if (!courseExists) {
-          const enrolledCourses = await this.enrollmentRepository.find({
-            where: { student: { id: userId } },
-            relations: ['course']
-          });
-
-          const coursesData = enrolledCourses.map(enrollment => ({
-            id: enrollment.course.id,
-            name: enrollment.course.name
-          }));
-
-          const availableCourses = await this.courseRepository.find();
-          const availableCoursesData = availableCourses.map(course => ({
-            id: course.id,
-            name: course.name
-          }));
-
-          return {
-            statusCode: 403,
-            message: 'Bu kurs mavjud emas. Siz obuna bo‘lgan kurslarni ko‘ring va boshqa kurslarga obuna bo‘ling.',
-            data: {
-              enrolledCourses: coursesData,
-              availableCourses: availableCoursesData.filter(course => !coursesData.some(enrolled => enrolled.id === course.id))
-            }
-          };
-        }
-
+        // Lesson mavjudligini tekshirish
         if (!lesson) {
           const availableLessons = await this.lessonRepository.find({
             where: { module: { course: { id: courseId } } },
             select: ['id', 'title']
           });
-
           const lessonsData = availableLessons.map(lesson => ({
             id: lesson.id,
             title: lesson.title
@@ -148,7 +138,7 @@ export class LessonService {
 
           return {
             statusCode: 404,
-            message: `Noto'g'ri Lesson ID kiritildi.`,
+            message: `Noto'g'ri Lesson ID kiritildi. Mavjud darslar ro'yxati:`,
             data: lessonsData.length > 0 ? lessonsData : [{ message: 'Lesson hozircha mavjud emas.' }]
           };
         }

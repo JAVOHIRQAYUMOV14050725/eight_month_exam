@@ -10,8 +10,8 @@ import { SubmissionModule } from './submission/submission.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
-import redisStore from 'cache-manager-redis-store'; // Ensure this is the default export
+import { CacheModule } from '@nestjs/cache-manager';
+import redisStore from 'cache-manager-redis-store';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './exception_filter';
 import { AuthGuard } from './guards/auth.guard';
@@ -22,6 +22,7 @@ const store = redisStore as unknown as (options?: any) => any;
 
 @Module({
   imports: [
+    // PostgreSQL konfiguratsiyasi
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
@@ -35,9 +36,13 @@ const store = redisStore as unknown as (options?: any) => any;
       }),
       inject: [ConfigService],
     }),
+
+    // Konfiguratsiya moduli
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+
+    // CacheModule konfiguratsiyasi
     CacheModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         store,
@@ -46,6 +51,8 @@ const store = redisStore as unknown as (options?: any) => any;
       }),
       inject: [ConfigService],
     }),
+
+    // Modul importlari
     UserModule,
     CourseModule,
     ModuleModule,

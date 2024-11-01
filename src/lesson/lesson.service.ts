@@ -36,7 +36,6 @@ export class LessonService {
       const lesson = this.lessonRepository.create(createLessonData);
       const savedLesson = await this.lessonRepository.save(lesson);
 
-      // Yangi yaratilgan darsni keshga saqlash
       await this.cacheManager.set(`lesson-${savedLesson.id}`, savedLesson);
 
       return { statusCode: 201, message: 'Dars muvaffaqiyatli yaratildi', data: savedLesson };
@@ -46,7 +45,6 @@ export class LessonService {
     }
   }
 
-  // Modul mavjud bo'lmaganda javob qaytarish uchun yordamchi metod
   private async moduleNotFoundResponses(): Promise<{ statusCode: number; message: string; data: any }> {
     const availableModules = await this.moduleRepository.find({
       select: ['id', 'name']
@@ -68,8 +66,7 @@ export class LessonService {
 
   async findOne(id: number, userId: number, courseId: number, role: User_Role): Promise<{ statusCode: number, message: string, data?: Lesson | any }> {
     try {
-      // Teacher yoki Admin roli uchun cheklovlarni olib tashlash va obuna tekshirmaslik
-      if (role === User_Role.Student) {
+      if (role === User_Role.Student || User_Role.Admin) {
         const enrollment = await this.enrollmentRepository.findOne({
           where: { student: { id: userId }, course: { id: courseId } }
         });
@@ -102,7 +99,6 @@ export class LessonService {
         }
       }
 
-      // Course mavjudligini tekshirish
       const courseExists = await this.courseRepository.findOne({ where: { id: courseId } });
       if (!courseExists) {
         const availableCourses = await this.courseRepository.find({
@@ -120,12 +116,10 @@ export class LessonService {
         };
       }
 
-      // Lessonni cache orqali olish yoki database dan qidirish
       let lesson = await this.getLessonFromCache(id);
       if (!lesson) {
         lesson = await this.lessonRepository.findOne({ where: { id, module: { course: { id: courseId } } }, relations: ['module'] });
 
-        // Lesson mavjudligini tekshirish
         if (!lesson) {
           const availableLessons = await this.lessonRepository.find({
             where: { module: { course: { id: courseId } } },
@@ -164,7 +158,7 @@ export class LessonService {
 
   async getLessonFromCache(id: number): Promise<Lesson | null> {
     const lesson = await this.cacheManager.get<Lesson>(`lesson-${id}`);
-    return lesson || null; // Return null if lesson is not found in cache
+    return lesson || null;
   }
 
 
@@ -186,7 +180,6 @@ export class LessonService {
 
       const updatedLesson = await this.lessonRepository.save(lesson);
 
-      // Updating the cache
       await this.cacheManager.set(`lesson-${updatedLesson.id}`, updatedLesson);
 
       return { statusCode: 200, message: 'Lesson updated successfully', data: updatedLesson };
@@ -204,7 +197,6 @@ export class LessonService {
       }
       await this.lessonRepository.remove(lesson);
 
-      // Removing the lesson from cache
       await this.cacheManager.del(`lesson-${id}`);
 
       return { statusCode: 200, message: 'Lesson deleted successfully' };
@@ -215,7 +207,6 @@ export class LessonService {
   }
 
 
-  // Helper methods for responses
   private moduleNotFoundResponse(moduleId: number) {
     return {
       statusCode: 400,

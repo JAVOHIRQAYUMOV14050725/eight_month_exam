@@ -76,7 +76,7 @@ export class EnrollmentService {
 
   async findAll(req: any): Promise<any> {
     const userId = parseInt(req.user.id);
-    const userRole = req.user.role; // User roli
+    const userRole = req.user.role;
 
     let enrollments;
 
@@ -120,5 +120,8 @@ export class EnrollmentService {
       },
     };
   }
+
+
+
 
 }

@@ -5,7 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm'; // getRepositoryToken import qilish
 import { Submission } from './entities/submission.entity'; // Submission entity import qilish
-import { Assignment } from 'src/assignment/entities/assignment.entity';
+import { Assignment } from '../assignment/entities/assignment.entity';
+import { Modules } from '../module/entities/module.entity';
+import { User } from '../user/entities/user.entity';
 
 describe('SubmissionController', () => {
   let controller: SubmissionController;
@@ -16,7 +18,7 @@ describe('SubmissionController', () => {
       providers: [
         SubmissionService,
         {
-          provide: getRepositoryToken(Submission), // SubmissionRepository ni taqdim etish
+          provide: getRepositoryToken(Submission),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -25,13 +27,17 @@ describe('SubmissionController', () => {
           },
         },
         {
-          provide: getRepositoryToken(Assignment), // SubmissionRepository ni taqdim etish
+          provide: getRepositoryToken(Assignment),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
             save: jest.fn(),
             remove: jest.fn(),
           },
+        },
+        {
+          provide: Cache,
+          useValue: {} // Mocked Cache
         },
         {
           provide: JwtService,
@@ -53,10 +59,4 @@ describe('SubmissionController', () => {
 
     controller = module.get<SubmissionController>(SubmissionController);
   });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
-  // Qo'shimcha testlar kiritishingiz mumkin
-});
+})

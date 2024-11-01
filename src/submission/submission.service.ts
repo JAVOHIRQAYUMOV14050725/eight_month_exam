@@ -22,7 +22,7 @@ export class SubmissionService {
     private readonly submissionRepository: Repository<Submission>,
     @InjectRepository(Assignment)
     private readonly assignmentRepository: Repository<Assignment>,
-    private readonly cache: Cache, // Injecting Cache
+    private readonly cache: Cache, 
   ) { }
 
   async update(id: number, updateSubmissionDto: UpdateSubmissionDto, user: any): Promise<Omit<Submission, 'student'>> {
@@ -81,7 +81,7 @@ export class SubmissionService {
     let submissions = await this.cache.get<any>(cacheKey);
 
     if (!submissions) {
-      if (user.role === User_Role.Teacher) {
+      if (user.role === User_Role.Teacher || User_Role.Admin) {
         submissions = await this.handleTeacherSubmissions();
       } else {
         submissions = await this.handleStudentSubmissions(user.id);

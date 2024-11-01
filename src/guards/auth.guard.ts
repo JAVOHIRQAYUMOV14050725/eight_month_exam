@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
         const token = request.headers['authorization']?.split(' ')[1];
 
         if (!token) {
-            throw new UnauthorizedException('Token not provided');
+            throw new HttpException('Token not provided', HttpStatus.UNAUTHORIZED);
         }
 
         try {
@@ -24,20 +24,20 @@ export class AuthGuard implements CanActivate {
             const user = await this.userService.findOneUser(payload.id);
 
             if (!user) {
-                throw new UnauthorizedException('User not found or deleted');
+                throw new HttpException('Siz registratsiyadan o\'tmagansiz', HttpStatus.UNAUTHORIZED);
             }
 
-            // `request.user` ni belgilash
+            if (!user.refreshToken) {
+                throw new HttpException('Sizning refresh tokeningiz yo\'q, iltimos yangilang', HttpStatus.UNAUTHORIZED);
+            }
+
             request.user = user;
             return true;
         } catch (error) {
             if (error.name === 'TokenExpiredError') {
-                throw new UnauthorizedException('Token has expired');
+                throw new HttpException('Token has expired', HttpStatus.UNAUTHORIZED);
             }
-            throw new UnauthorizedException('Invalid token');
+            throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
         }
     }
-
-
-
 }

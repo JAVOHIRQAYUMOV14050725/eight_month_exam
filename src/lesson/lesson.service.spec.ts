@@ -4,9 +4,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Lesson } from './entities/lesson.entity';
 import { Enrollment } from '../enrollment/entities/enrollment.entity';
 import { Modules } from '../module/entities/module.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Course } from '../course/entities/course.entity';
+import { UserService } from '../user/user.service';
+import { User } from '../user/entities/user.entity';
 
 describe('LessonService', () => {
   let service: LessonService;
+  let userService: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +36,23 @@ describe('LessonService', () => {
           },
         },
         {
+          provide: getRepositoryToken(Course),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
+        },
+        {
           provide: getRepositoryToken(Modules),
           useValue: {
             find: jest.fn(),
@@ -39,10 +61,18 @@ describe('LessonService', () => {
             remove: jest.fn(),
           },
         },
+        {
+          provide: UserService, // Add UserService with mock implementation
+          useValue: {
+            findOne: jest.fn(),
+            createUser: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<LessonService>(LessonService);
+    userService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {

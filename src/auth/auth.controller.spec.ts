@@ -5,10 +5,13 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
   let service: AuthService;
+  let userService: UserService;
+
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,7 +19,7 @@ describe('AuthController', () => {
       providers: [
         AuthService,
         {
-          provide: getRepositoryToken(User), // Provide the mock UserRepository
+          provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -35,12 +38,14 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     service = module.get<AuthService>(AuthService);
+    userService = module.get<UserService>(UserService)
+
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
+
   });
 
-  // Add more tests for AuthController methods as needed
 });

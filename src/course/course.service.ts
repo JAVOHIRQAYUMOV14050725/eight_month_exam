@@ -11,7 +11,7 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './entities/course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { Modules } from '../module/entities/module.entity';
 import { Lesson } from '../lesson/entities/lesson.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -20,6 +20,9 @@ import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 
 @Injectable()
 export class CourseService {
+
+
+ 
   constructor(
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
@@ -27,7 +30,7 @@ export class CourseService {
     private readonly modulesRepository: Repository<Modules>,
     @InjectRepository(Lesson)
     private readonly lessonsRepository: Repository<Lesson>,
-    @InjectRepository(Enrollment) // Assuming you have an Enrollment entity
+    @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
 
     @Inject(CACHE_MANAGER)
@@ -40,6 +43,9 @@ export class CourseService {
       .map(course => `{ Name: ${course.name}, ID: ${course.id} }`)
       .join(', ');
   }
+
+
+
 
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     try {
@@ -54,7 +60,6 @@ export class CourseService {
 
       await this.cacheManager.del(`course:${course.id}`);
 
-      // Fetch related modules and lessons
       const modules = await this.modulesRepository.find({ where: { course: { id: course.id } } });
       const modulesWithLessons = await Promise.all(
         modules.map(async (module) => {
@@ -81,7 +86,7 @@ export class CourseService {
               const lessons = isRegistered
                 ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
                 : [];
-              return { ...module, lessons: lessons.length ? lessons : [] }; // Return an empty array if no lessons
+              return { ...module, lessons: lessons.length ? lessons : [] };
             })
           );
           return {
@@ -120,7 +125,7 @@ export class CourseService {
         throw new NotFoundException(`Course with ID ${id} not found. Available Courses: ${availableCourses}`);
       }
 
-      await this.cacheManager.set(cacheKey, JSON.stringify(course), 3600); // Cache for 1 hour
+      await this.cacheManager.set(cacheKey, JSON.stringify(course), 3600);
       return course;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -135,7 +140,6 @@ export class CourseService {
       const cacheKey = `course_modules:${courseId}`;
       const cachedModules = await this.cacheManager.get(cacheKey);
 
-      // Cast cachedModules to string before parsing
       if (cachedModules) {
         return JSON.parse(cachedModules as string);
       }
@@ -149,12 +153,11 @@ export class CourseService {
         });
       }
 
-      // Check if the user is enrolled in the course
       const enrollment = await this.enrollmentRepository.findOne({
-        where: { courseId: courseId, userId: userId } // Now userId is defined
+        where: { courseId: courseId, userId: userId } 
       });
 
-      const isRegistered = !!enrollment; // true if enrolled, false otherwise
+      const isRegistered = !!enrollment; 
 
       const modules = await this.modulesRepository.find({ where: { course: { id: courseId } } });
       if (modules.length === 0) {
@@ -166,7 +169,7 @@ export class CourseService {
           const lessons = isRegistered
             ? await this.lessonsRepository.find({ where: { moduleId: module.id } })
             : [];
-          return { ...module, lessons: lessons.length ? lessons : [] }; // Return an empty array if no lessons
+          return { ...module, lessons: lessons.length ? lessons : [] }; 
         })
       );
 
@@ -181,7 +184,7 @@ export class CourseService {
         modules: modulesWithLessons,
       };
 
-      await this.cacheManager.set(cacheKey, JSON.stringify(courseData), 3600); // Cache for 1 hour
+      await this.cacheManager.set(cacheKey, JSON.stringify(courseData), 3600);
       return courseData;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -203,11 +206,9 @@ export class CourseService {
         throw new NotFoundException(`Course with ID ${id} not found. Available Courses: ${availableCourses}`);
       }
 
-      // Implement update logic here
-      Object.assign(course, updateCourseDto); // Update course properties
-      await this.courseRepository.save(course); // Save updated course
+      Object.assign(course, updateCourseDto);
+      await this.courseRepository.save(course);
 
-      // Clear cache for the updated course
       await this.cacheManager.del(`course:${course.id}`);
 
       return course;
@@ -230,6 +231,38 @@ export class CourseService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async findCourseByName(name: string): Promise<Course[]> {
+    try {
+      const lowerCaseName = name.toLowerCase();
+
+      const courses = await this.courseRepository.find({
+        where: {
+          name: ILike(`%${lowerCaseName}%`),
+          
+        },
+      });
+      console.log(lowerCaseName);
+      
+
+      if (courses.length === 0) {
+        console.log(name);
+        
+        throw new NotFoundException(`Kurs "${name}" topilmadi.`);
+      }
+
+      return courses;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+
+
+
 }
 
 

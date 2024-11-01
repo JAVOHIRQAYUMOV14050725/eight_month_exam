@@ -5,6 +5,7 @@ import { Lesson } from '../lesson/entities/lesson.entity';
 import { Assignment } from '../assignment/entities/assignment.entity';
 import { ModuleService } from '../module/module.service';
 import { Modules } from '../module/entities/module.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ModuleService', () => {
   let service: ModuleService;
@@ -12,8 +13,8 @@ describe('ModuleService', () => {
   const mockModulesRepository = {
     find: jest.fn().mockResolvedValue([]),
     findOne: jest.fn().mockResolvedValue(null),
-    save: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }), // Provide a mock return value
-    remove: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }), // Simulate removal
+    save: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }),
+    remove: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }), 
   };
 
   beforeEach(async () => {
@@ -31,6 +32,14 @@ describe('ModuleService', () => {
             findOne: jest.fn(),
             save: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: CACHE_MANAGER, // Use CACHE_MANAGER as the provider
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
           },
         },
         {

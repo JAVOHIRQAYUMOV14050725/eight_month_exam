@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '../guards/auth.guard';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -20,6 +21,15 @@ describe('UserController', () => {
           useValue: {
             sign: jest.fn(),
             verify: jest.fn(),
+          },
+          
+        },
+        {
+          provide: CACHE_MANAGER, // Use CACHE_MANAGER instead of Cache
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
           },
         },
         {

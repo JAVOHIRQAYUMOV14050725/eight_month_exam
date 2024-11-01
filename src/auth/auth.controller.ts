@@ -6,6 +6,7 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+import { Request, Response } from 'express'; 
 
 
 interface CustomRequest extends Request {
@@ -35,12 +36,12 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(@Headers('authorization') authorizationHeader: string) {
+  async logout(@Headers('authorization') authorizationHeader: string, @Res() response: Response) {
     const tokens = authorizationHeader.split(' ');
     const accessToken = tokens[1];
-    return this.authService.logout(accessToken);
+    const result = await this.authService.logout(accessToken, response);
+    return result;
   }
-
 
 
 
@@ -105,7 +106,7 @@ async refreshToken(@Req() request: CustomRequest) {
       ];
     }
 
-    return { message, users }; // xabar va foydalanuvchilarni qaytarish
+    return { message, users }; 
   }
 
 

@@ -14,8 +14,8 @@ import { UserModule } from '../user/user.module';
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: '1d' },
   }),
-  CacheModule.register(),
-    UserModule
+    CacheModule.register(),
+        UserModule
   ],
   controllers: [SubmissionController],
   providers: [SubmissionService],

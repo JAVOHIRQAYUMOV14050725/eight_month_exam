@@ -3,7 +3,7 @@ import { EnrollmentService } from './enrollment.service';
 import { CourseService } from '../course/course.service';
 import { UserService } from '../user/user.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Enrollment } from './entities/enrollment.entity'; // To'g'ri yo'lni tekshiring
+import { Enrollment } from './entities/enrollment.entity';
 import { Course } from '../course/entities/course.entity';
 import { User } from '../user/entities/user.entity';
 
@@ -15,24 +15,22 @@ describe('EnrollmentService', () => {
       providers: [
         EnrollmentService,
         {
-          provide: getRepositoryToken(Enrollment), // Enrollment repository uchun mock
+          provide: getRepositoryToken(Enrollment),
           useValue: {
             find: jest.fn(),
             save: jest.fn(),
-            // Qo'shimcha metodlarni mock qilish mumkin
           },
         },
         {
-          provide: getRepositoryToken(Course), // Enrollment repository uchun mock
+          provide: getRepositoryToken(Course), 
           useValue: {
             find: jest.fn(),
             save: jest.fn(),
-            // Qo'shimcha metodlarni mock qilish mumkin
           },
         },
 
         {
-          provide: getRepositoryToken(User), // UserRepository mockini qo'shish
+          provide: getRepositoryToken(User),
           useValue: {
             // Mock metodlar
             find: jest.fn(),
@@ -40,17 +38,15 @@ describe('EnrollmentService', () => {
           },
         },
         {
-          provide: CourseService, // CourseService uchun mock
+          provide: CourseService,
           useValue: {
-            // CourseService dan foydalanish uchun kerakli metodlar
-            someMethod: jest.fn(), // O'zingizga kerakli metodlar
+            someMethod: jest.fn(), 
           },
         },
         {
-          provide: UserService, // UserService uchun mock
+          provide: UserService, 
           useValue: {
-            // UserService dan foydalanish uchun kerakli metodlar
-            anotherMethod: jest.fn(), // O'zingizga kerakli metodlar
+            anotherMethod: jest.fn(), 
           },
         },
       ],
@@ -63,5 +59,4 @@ describe('EnrollmentService', () => {
     expect(service).toBeDefined();
   });
 
-  // Qo'shimcha testlar kiritishingiz mumkin
 });

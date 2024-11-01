@@ -3,6 +3,7 @@ import { ModuleService } from './module.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Modules } from './entities/module.entity';
 import { Course } from '../course/entities/course.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ModuleService', () => {
   let service: ModuleService;
@@ -12,19 +13,25 @@ describe('ModuleService', () => {
       providers: [
         ModuleService,
         {
-          provide: getRepositoryToken(Modules), // Module entitysi uchun mock repository
+          provide: getRepositoryToken(Modules),
           useValue: {
-            // Mock metodlar
-            find: jest.fn(), // Modullar ro'yxatini olish
-            findOne: jest.fn(), // Bitta modulni olish
-            save: jest.fn(), // Modulni saqlash
-            remove: jest.fn(), // Modulni o'chirish
-            // Qo'shimcha metodlarni mock qilish
+            find: jest.fn(), 
+            findOne: jest.fn(),
+            save: jest.fn(), 
+            remove: jest.fn(),
+      
           },
         },
-        // Agar ModuleService boshqa repository yoki servislardan foydalanayotgan bo'lsa, ularni ham mock qilishingiz kerak:
         {
-          provide: getRepositoryToken(Course), // Agar CourseRepository kerak bo'lsa
+          provide: CACHE_MANAGER, // Use CACHE_MANAGER as the provider
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Course),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),

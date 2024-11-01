@@ -77,13 +77,14 @@ export class AuthService {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     (response as any).send({ accessToken });
   }
 
-  async logout(accessToken: string): Promise<void> {
+  async logout(accessToken: string, response: Response): Promise<{ message: string }> {
+    console.time('Logout Duration'); 
     try {
       const payload = this.jwtService.verify(accessToken);
       const user = await this.userRepository.findOne({ where: { id: payload.id } });
@@ -92,12 +93,28 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      user.refreshToken = null;
+      user.refreshToken = null; 
       await this.userRepository.save(user);
+
+      response.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+
+      const message = 'Siz muvaffaqiyatli chiqdingiz!';
+      response.send({ message });
+
+      return { message }; 
     } catch (error) {
       throw new UnauthorizedException('Invalid access token');
     }
   }
+
+
+
+
+
 
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
     const user = await this.userRepository.findOne({ where: { refreshToken } });

@@ -13,25 +13,24 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: getRepositoryToken(User), // Provide the mock UserRepository
+          provide: getRepositoryToken(User), 
           useValue: {
-            findOne: jest.fn(), // Mock methods as needed
+            findOne: jest.fn(), 
             create: jest.fn(),
             save: jest.fn(),
-            // Add any other methods you may use in your service
           },
         },
         {
           provide: JwtService,
           useValue: {
-            sign: jest.fn(), // Mock sign method
-            verify: jest.fn(), // Mock verify method
+            sign: jest.fn(),
+            verify: jest.fn(),
           },
         },
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(), // Mock get method if needed
+            get: jest.fn(), 
           },
         },
       ],
@@ -44,5 +43,4 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
-  // Add more tests for AuthService methods as needed
 });

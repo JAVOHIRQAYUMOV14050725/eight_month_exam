@@ -6,7 +6,9 @@ import { Course } from './entities/course.entity';
 import { Modules } from '../module/entities/module.entity';
 import { Lesson } from '../lesson/entities/lesson.entity';
 import { JwtService } from '@nestjs/jwt'; // JwtService ni import qilish
-import { ConfigService } from '@nestjs/config'; // ConfigService ni import qilish
+import { ConfigService } from '@nestjs/config';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('CourseController', () => {
   let controller: CourseController;
@@ -45,6 +47,23 @@ describe('CourseController', () => {
           },
         },
         {
+          provide: getRepositoryToken(Enrollment),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: CACHE_MANAGER, // Use CACHE_MANAGER instead of Cache
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
+        },
+        {
           provide: JwtService,
           useValue: {
             sign: jest.fn(),
@@ -65,7 +84,7 @@ describe('CourseController', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks(); // Reset mocks after each test
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {

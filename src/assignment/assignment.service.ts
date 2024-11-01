@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Assignment } from './entities/assignment.entity';
@@ -17,12 +17,16 @@ export class AssignmentService {
 
   async create(moduleId: number, createAssignmentDto: CreateAssignmentDto): Promise<Assignment> {
     try {
-      const module = await this.moduleRepository.findOne({ where: { id: moduleId } });
+      // Modulni topish
+      const module = await this.moduleRepository.findOne({ where: { id: moduleId }, relations: ['course'] });
+
       if (!module) {
         const availableModules = await this.moduleRepository.find();
         throw new NotFoundException({
           message: `Module ${moduleId} not found.`,
-          error: `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`,
+          error: availableModules.length
+            ? `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+            : 'Currently, there are no available modules.',
           statusCode: 404
         });
       }
@@ -46,8 +50,12 @@ export class AssignmentService {
         ...createAssignmentDto,
         module,
       });
+
       return await this.assignmentRepository.save(assignment);
     } catch (error) {
+      if (error instanceof NotFoundException || error instanceof ConflictException) {
+        throw error;
+      }
       throw new InternalServerErrorException({
         message: 'Failed to create assignment',
         error: error.message,
@@ -56,66 +64,90 @@ export class AssignmentService {
     }
   }
 
+
   async findAll(moduleId: number): Promise<Assignment[]> {
-    const module = await this.moduleRepository.findOne({ where: { id: moduleId } });
+    const module = await this.moduleRepository.findOne({
+      where: { id: moduleId },
+      relations: ['course']
+    });
 
     if (!module) {
       const availableModules = await this.moduleRepository.find();
       throw new NotFoundException({
         message: `Module ${moduleId} not found.`,
-        error: `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`,
-        statusCode: 404
+        error: availableModules.length
+          ? `Available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+          : 'Currently, there are no available modules.',
+        statusCode: 404,
       });
     }
 
-    try {
-      return await this.assignmentRepository.find({
-        where: { module: { id: moduleId } },
-        relations: ['module'],
-      });
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Failed to fetch assignments',
-        error: error.message,
-        statusCode: 500
+    const assignments = await this.assignmentRepository.find({
+      where: { module: { id: moduleId } },
+      relations: ['module'],
+    });
+
+    if (!assignments.length) {
+      throw new NotFoundException({
+        message: `No assignments found for module ${moduleId}.`,
+        error: 'Currently, there are no assignments available for this module.',
+        statusCode: 404,
       });
     }
+
+    return assignments; 
   }
-
-
-
-
 
   async findOne(id: number): Promise<Assignment> {
     try {
+
       const assignment = await this.assignmentRepository.findOne({ where: { id }, relations: ['module'] });
-      if (!assignment) {
-        const availableAssignments = await this.assignmentRepository.find();
-        throw new NotFoundException({
-          message: `Assignment with ID ${id} not found.`,
-          error: `Here are the available assignments: ${availableAssignments.map(assign => `ID: ${assign.id}, Description: ${assign.description}`).join('; ')}`,
-          statusCode: 404
-        });
+
+      if (assignment) {
+        return assignment; 
       }
-      return assignment;
+      const availableAssignments = await this.assignmentRepository.find();
+      console.log('Available assignments:', availableAssignments);
+
+      throw new NotFoundException({
+        statusCode: 404,
+        timestamp: new Date().toISOString(),
+        path: `/assignments/${id}`,
+        message: `Assignment with ID ${id} not found.`,
+        suggestions: availableAssignments.length
+          ? `Available assignments: ${availableAssignments.map(assign => `ID: ${assign.id}, Description: ${assign.description}`).join('; ')}`
+          : 'Currently, there are no available assignments.'
+      });
+
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
       throw new InternalServerErrorException({
-        message: `Failed to fetch assignment with ID ${id}`,
-        error: error.message,
-        statusCode: 500
+        statusCode: 500,
+        path: `/assignments/${id}`,
+        message: `Failed to fetch assignment with ID ${id}.`,
+        error: 'An internal server error occurred. Please try again later.'
       });
     }
   }
+
+
+
 
   async update(id: number, updateAssignmentDto: UpdateAssignmentDto): Promise<Assignment> {
     try {
       const assignment = await this.assignmentRepository.findOne({ where: { id }, relations: ['module'] });
+
       if (!assignment) {
         const availableAssignments = await this.assignmentRepository.find();
         throw new NotFoundException({
           message: `Assignment with ID ${id} not found.`,
-          error: `Here are the available assignments: ${availableAssignments.map(assign => `ID: ${assign.id}, Description: ${assign.description}`).join('; ')}`,
-          statusCode: 404
+          error: availableAssignments.length
+            ? `Here are the available assignments: ${availableAssignments.map(assign => `ID: ${assign.id}, Description: ${assign.description}`).join('; ')}`
+            : 'Currently, there are no available assignments.',
+          statusCode: 404,
         });
       }
 
@@ -124,14 +156,19 @@ export class AssignmentService {
         const availableModules = await this.moduleRepository.find();
         throw new NotFoundException({
           message: `Module ${assignment.module.id} not found.`,
-          error: `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`,
-          statusCode: 404
+          error: availableModules.length
+            ? `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+            : 'Currently, there are no available modules.',
+          statusCode: 404,
         });
       }
 
       Object.assign(assignment, updateAssignmentDto);
       return await this.assignmentRepository.save(assignment);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new InternalServerErrorException({
         message: 'Failed to update assignment',
         error: error.message,
@@ -140,14 +177,18 @@ export class AssignmentService {
     }
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     try {
-      const assignment = await this.findOne(id);
+      const assignment = await this.assignmentRepository.findOne({ where: { id }, relations: ['module'] });
+
       if (!assignment) {
+        const availableAssignments = await this.assignmentRepository.find();
         throw new NotFoundException({
-          message: `Assignment with ID ${id} not found`,
-          error: 'Assignment not found',
-          statusCode: 404
+          message: `Assignment with ID ${id} not found.`,
+          error: availableAssignments.length
+            ? `Here are the available assignments: ${availableAssignments.map(assign => `ID: ${assign.id}, Description: ${assign.description}`).join('; ')}`
+            : 'Currently, there are no available assignments.',
+          statusCode: 404,
         });
       }
 
@@ -156,13 +197,20 @@ export class AssignmentService {
         const availableModules = await this.moduleRepository.find();
         throw new NotFoundException({
           message: `Module ${assignment.module.id} not found.`,
-          error: `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`,
-          statusCode: 404
+          error: availableModules.length
+            ? `Here are the available modules: ${availableModules.map(mod => `ID: ${mod.id}, Name: ${mod.name}`).join('; ')}`
+            : 'Currently, there are no available modules.',
+          statusCode: 404,
         });
       }
 
       await this.assignmentRepository.remove(assignment);
+      return { message: `Assignment with ID ${id} has been successfully deleted.` };
+
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new InternalServerErrorException({
         message: 'Failed to delete assignment',
         error: error.message,

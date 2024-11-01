@@ -22,7 +22,6 @@ const store = redisStore as unknown as (options?: any) => any;
 
 @Module({
   imports: [
-    // PostgreSQL konfiguratsiyasi
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
@@ -33,16 +32,16 @@ const store = redisStore as unknown as (options?: any) => any;
         database: configService.get<string>('DB_NAME') || 'online_course',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+
       }),
       inject: [ConfigService],
     }),
 
-    // Konfiguratsiya moduli
     ConfigModule.forRoot({
       isGlobal: true,
+      
     }),
 
-    // CacheModule konfiguratsiyasi
     CacheModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         store,
@@ -52,7 +51,6 @@ const store = redisStore as unknown as (options?: any) => any;
       inject: [ConfigService],
     }),
 
-    // Modul importlari
     UserModule,
     CourseModule,
     ModuleModule,

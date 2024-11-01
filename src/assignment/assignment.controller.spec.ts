@@ -7,10 +7,12 @@ import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Modules } from '../module/entities/module.entity';
+import { UserService } from '../user/user.service';
 
 describe('AssignmentController', () => {
   let controller: AssignmentController;
   let service: AssignmentService;
+  let userService:UserService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,7 +20,7 @@ describe('AssignmentController', () => {
       providers: [
         AssignmentService,
         {
-          provide: getRepositoryToken(Assignment), // Mock for Assignment repository
+          provide: getRepositoryToken(Assignment), 
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -27,7 +29,7 @@ describe('AssignmentController', () => {
           },
         },
         {
-          provide: getRepositoryToken(Modules), // Mock for Modules repository
+          provide: getRepositoryToken(Modules), 
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -35,7 +37,7 @@ describe('AssignmentController', () => {
           },
         },
         {
-          provide: getRepositoryToken(User), // Mock for User repository
+          provide: getRepositoryToken(User), 
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -43,14 +45,22 @@ describe('AssignmentController', () => {
           },
         },
         {
-          provide: JwtService, // Mock for JwtService
+          provide: getRepositoryToken(Modules),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+        {
+          provide: JwtService, 
           useValue: {
             sign: jest.fn(),
             verify: jest.fn(),
           },
         },
         {
-          provide: ConfigService, // Mock for ConfigService
+          provide: ConfigService, 
           useValue: {
             get: jest.fn(),
           },
@@ -60,6 +70,7 @@ describe('AssignmentController', () => {
 
     controller = module.get<AssignmentController>(AssignmentController);
     service = module.get<AssignmentService>(AssignmentService);
+    userService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {
@@ -67,5 +78,4 @@ describe('AssignmentController', () => {
     expect(service).toBeDefined();
   });
 
-  // Add more tests here
 });

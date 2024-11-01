@@ -23,7 +23,7 @@ export class ModuleController {
   }
 
   @Get(':moduleId/lessons')
-  @Roles(User_Role.Teacher)
+  @Roles(User_Role.Teacher,User_Role.Admin)
   async findLessons(@Param('moduleId') moduleId: string) {
     try {
       return await this.moduleService.findLessonsByModuleId(+moduleId);
@@ -35,6 +35,7 @@ export class ModuleController {
 
 
   @Get(':id')
+  @Roles(User_Role.Teacher, User_Role.Admin)
   async findOne(@Param('id') id: string) {
     try {
       return await this.moduleService.findOne(+id);

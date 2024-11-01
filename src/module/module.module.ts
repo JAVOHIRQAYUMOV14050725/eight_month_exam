@@ -7,12 +7,13 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Course } from '../course/entities/course.entity';
 import { CacheModule } from '@nestjs/cache-manager';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([Modules, Course]),
+    TypeOrmModule.forFeature([Modules, Course,Enrollment]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },

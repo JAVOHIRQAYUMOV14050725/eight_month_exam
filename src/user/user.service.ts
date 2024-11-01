@@ -67,12 +67,10 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      // Foydalanuvchini qidirish
       const existingUser = await this.userRepository.findOne({
         where: { id, role: User_Role.Teacher },
       });
 
-      // Agar foydalanuvchi topilmasa
       if (!existingUser) {
         const allTeachers = await this.findTeachers();
         const teacherInfo = allTeachers.length
@@ -84,10 +82,8 @@ export class UserService {
         throw new NotFoundException(`Teacher with ID ${id} not found. ${teacherInfo}`);
       }
 
-      // Foydalanuvchini yangilash
       await this.userRepository.update(id, updateUserDto);
 
-      // Keshni tozalash
       await Promise.all([
         this.cacheManager.del('all_teachers'),
         this.cacheManager.del(`teacher_${id}`),
@@ -98,7 +94,6 @@ export class UserService {
         updatedUser: { id, ...updateUserDto },
       };
     } catch (error) {
-      // Xatoliklarni boshqarish
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

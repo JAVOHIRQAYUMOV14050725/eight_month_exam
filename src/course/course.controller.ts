@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ForbiddenException, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ForbiddenException, Req, InternalServerErrorException } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -6,11 +6,13 @@ import { AuthGuard } from '../guards/auth.guard';
 import { User_Role } from '../enums/user.role.enum';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
+import { Course } from './entities/course.entity';
 
 
 @Controller('course')
 export class CourseController {
-  constructor(private readonly courseService: CourseService) { }
+  constructor(private readonly courseService: CourseService,
+  ) { }
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
@@ -42,12 +44,6 @@ export class CourseController {
   }
 
 
-  @Get(':courseId/modules')
-  @UseGuards(AuthGuard)
-  async findModulesWithAuth(@Param('courseId') courseId: string, @Req() req: any) {
-    const userId = req.user.id;
-    return this.courseService.findModulesByCourseId(+courseId, userId, true);
-  }
 
   @Get(':courseId/modules/public')
   async findModulesPublic(@Param('courseId') courseId: string) {
@@ -67,5 +63,10 @@ export class CourseController {
   @Roles(User_Role.Admin)
   async remove(@Param('id') id: string) {
     return this.courseService.remove(+id, true);
+  }
+
+  @Post('name')
+  async findCourseByName(@Body('name') name: string): Promise<Course[]> {
+    return this.courseService.findCourseByName(name);
   }
 }

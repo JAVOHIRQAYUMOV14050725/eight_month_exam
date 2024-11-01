@@ -45,7 +45,7 @@ export class SubmissionController {
 
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(User_Role.Teacher, User_Role.Student)
+  @Roles(User_Role.Teacher, User_Role.Student,User_Role.Admin)
   async getSubmissions(@Req() req: any) {
     return this.submissionService.findAll(req.user);
   }

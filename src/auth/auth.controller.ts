@@ -1,10 +1,18 @@
+import { request,  } from 'express';
 import { User_Role } from './../enums/user.role.enum';
-import { Controller, Post, Body, UseGuards, Headers, Get, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Headers, Get, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+
+
+interface CustomRequest extends Request {
+  cookies: { [key: string]: string };
+}
+
+
 
 @Controller('auth')
 export class AuthController {
@@ -15,10 +23,15 @@ export class AuthController {
     return this.authService.register(body);
   }
 
+
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
+  async login(
+    @Body() body: { email: string; password: string },
+    @Res() response: Response, 
+  ) {
+    return this.authService.login(body.email, body.password, response);
   }
+
 
   @UseGuards(AuthGuard)
   @Post('logout')
@@ -28,13 +41,17 @@ export class AuthController {
     return this.authService.logout(accessToken);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('refresh-token')
-  async refreshToken(@Headers('authorization') authorizationHeader: string) {
-    const tokens = authorizationHeader.split(' ');
-    const refreshToken = tokens[2];
-    return this.authService.refreshToken(refreshToken);
-  }
+
+
+
+@UseGuards(AuthGuard)
+@Post('refresh-token')
+async refreshToken(@Req() request: CustomRequest) {
+  const refreshToken = request.cookies['refreshToken'];
+  return this.authService.refreshToken(refreshToken);
+}
+
+
 
   @UseGuards(AuthGuard)
   @Get('me')
@@ -96,3 +113,5 @@ export class AuthController {
 
 
 }
+
+

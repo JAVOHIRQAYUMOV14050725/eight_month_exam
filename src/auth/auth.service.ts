@@ -1,15 +1,21 @@
-import { Injectable, UnauthorizedException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  ForbiddenException,
+  Res,
+} from '@nestjs/common';
 import { User } from '../user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Admin, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User_Role } from '../enums/user.role.enum';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -49,12 +55,8 @@ export class AuthService {
     return savedUser;
   }
 
-
-
-
-  async login(email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> {
+  async login(email: string, password: string, response: any): Promise<void>  {
     const user = await this.userRepository.findOne({ where: { email } });
-
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -71,15 +73,18 @@ export class AuthService {
     user.refreshToken = refreshToken;
     await this.userRepository.save(user);
 
+    (response as any).cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
-    return { accessToken, refreshToken };
+    (response as any).send({ accessToken });
   }
-
-
 
   async logout(accessToken: string): Promise<void> {
     try {
-      // Access tokenni tekshirish va foydalanuvchi ma'lumotlarini olish
       const payload = this.jwtService.verify(accessToken);
       const user = await this.userRepository.findOne({ where: { id: payload.id } });
 
@@ -94,30 +99,25 @@ export class AuthService {
     }
   }
 
-
-
-
-
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
     const user = await this.userRepository.findOne({ where: { refreshToken } });
-
+    
     if (!user) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
     const payload = { id: user.id, email: user.email, role: user.role };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
 
     return { accessToken };
   }
-
 
 
   async getMe(accessToken: string): Promise<Partial<User>> {
     try {
       const payload = this.jwtService.verify(accessToken);
       const user = await this.userRepository.findOne({ where: { id: payload.id } });
-
+       
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
@@ -131,19 +131,14 @@ export class AuthService {
     }
   }
 
-
-
   async getAllUsers(role: User_Role): Promise<{ teachers: Partial<User>[]; students: Partial<User>[]; message: string }> {
     let teachers: User[] = [];
     let students: User[] = [];
     let message: string;
 
-
     if (role === User_Role.Admin) {
       teachers = await this.userRepository.find({ where: { role: User_Role.Teacher } });
       students = await this.userRepository.find({ where: { role: User_Role.Student } });
-
-
       message = `Mana teacherlar soni: ${teachers.length}, Mana studentlar soni: ${students.length}`;
     } else if (role === User_Role.Teacher) {
       students = await this.userRepository.find({ where: { role: User_Role.Student } });
@@ -164,7 +159,4 @@ export class AuthService {
 
     return { teachers, students, message };
   }
-
-
-
 }

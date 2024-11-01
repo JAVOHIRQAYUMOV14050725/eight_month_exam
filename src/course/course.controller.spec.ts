@@ -5,10 +5,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Modules } from '../module/entities/module.entity';
 import { Lesson } from '../lesson/entities/lesson.entity';
-import { JwtService } from '@nestjs/jwt'; // JwtService ni import qilish
+import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Enrollment } from '../enrollment/entities/enrollment.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { User } from '../user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
+import { Auth } from '../auth/entities/auth.entity';
 
 describe('CourseController', () => {
   let controller: CourseController;
@@ -19,8 +22,25 @@ describe('CourseController', () => {
       controllers: [CourseController],
       providers: [
         CourseService,
+        UserService,
         {
           provide: getRepositoryToken(Course),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Auth), 
+          useValue: {
+            find: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(User),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -56,7 +76,7 @@ describe('CourseController', () => {
           },
         },
         {
-          provide: CACHE_MANAGER, // Use CACHE_MANAGER instead of Cache
+          provide: CACHE_MANAGER,
           useValue: {
             get: jest.fn(),
             set: jest.fn(),
@@ -90,6 +110,4 @@ describe('CourseController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
-
 });

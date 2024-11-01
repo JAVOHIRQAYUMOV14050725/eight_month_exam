@@ -11,6 +11,8 @@ import { Lesson } from './entities/lesson.entity';
 import { Enrollment } from '../enrollment/entities/enrollment.entity';
 import { Course } from '../course/entities/course.entity';
 import { UserService } from '../user/user.service';
+import { User } from '../user/entities/user.entity';
+import { Auth } from '../auth/entities/auth.entity';
 
 describe('LessonController', () => {
   let controller: LessonController;
@@ -22,6 +24,7 @@ describe('LessonController', () => {
       controllers: [LessonController],
       providers: [
         LessonService,
+        UserService,
         {
           provide: getRepositoryToken(Lesson),
           useValue: {
@@ -38,6 +41,13 @@ describe('LessonController', () => {
             findOne: jest.fn(),
             save: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Auth),
+          useValue: {
+            find: jest.fn(),
+            save: jest.fn(),
           },
         },
         {
@@ -59,7 +69,7 @@ describe('LessonController', () => {
           },
         },
         {
-          provide: CACHE_MANAGER, // Corrected provider
+          provide: CACHE_MANAGER, 
           useValue: {
             get: jest.fn(),
             set: jest.fn(),
@@ -68,6 +78,15 @@ describe('LessonController', () => {
         },
         {
           provide: getRepositoryToken(Modules),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(User),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),

@@ -20,6 +20,7 @@ describe('EnrollmentController', () => {
       controllers: [EnrollmentController],
       providers: [
         EnrollmentService,
+        UserService,
         {
           provide: getRepositoryToken(Enrollment),
           useValue: {

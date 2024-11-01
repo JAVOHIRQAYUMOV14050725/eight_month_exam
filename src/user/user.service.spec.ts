@@ -62,6 +62,7 @@ describe('UserController', () => {
             save: jest.fn(),
           },
         },
+        UserService
       ],
     }).compile();
 
@@ -72,5 +73,4 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
-  // Add more tests here as needed
 });

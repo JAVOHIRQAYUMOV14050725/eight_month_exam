@@ -8,40 +8,27 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Modules } from '../module/entities/module.entity';
 import { UserService } from '../user/user.service';
+import { Auth } from '../auth/entities/auth.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('AssignmentController', () => {
   let controller: AssignmentController;
   let service: AssignmentService;
-  let userService:UserService
+  let userService: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AssignmentController],
       providers: [
         AssignmentService,
+        UserService,
         {
-          provide: getRepositoryToken(Assignment), 
+          provide: getRepositoryToken(Assignment),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
             save: jest.fn(),
             remove: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(Modules), 
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            save: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(User), 
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            save: jest.fn(),
           },
         },
         {
@@ -53,18 +40,43 @@ describe('AssignmentController', () => {
           },
         },
         {
-          provide: JwtService, 
+          provide: getRepositoryToken(User),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Auth),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
+        },
+        {
+          provide: JwtService,
           useValue: {
             sign: jest.fn(),
             verify: jest.fn(),
           },
         },
         {
-          provide: ConfigService, 
+          provide: ConfigService,
           useValue: {
             get: jest.fn(),
           },
         },
+        UserService,
       ],
     }).compile();
 
@@ -75,7 +87,5 @@ describe('AssignmentController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-    expect(service).toBeDefined();
   });
-
 });

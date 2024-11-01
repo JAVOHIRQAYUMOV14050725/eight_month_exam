@@ -12,6 +12,7 @@ describe('ModuleService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ModuleService,
+        
         {
           provide: getRepositoryToken(Modules),
           useValue: {

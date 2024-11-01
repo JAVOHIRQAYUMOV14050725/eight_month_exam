@@ -1,3 +1,4 @@
+import { UserService } from '../user/user.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Course } from '../course/entities/course.entity';
@@ -6,21 +7,27 @@ import { Assignment } from '../assignment/entities/assignment.entity';
 import { ModuleService } from '../module/module.service';
 import { Modules } from '../module/entities/module.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { User } from '../user/entities/user.entity';
+import { CourseService } from './course.service';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
+import { Auth } from '../auth/entities/auth.entity';
 
-describe('ModuleService', () => {
-  let service: ModuleService;
+describe('CourseService', () => {
+  let courseService: CourseService;
+  let userService: UserService;
 
   const mockModulesRepository = {
     find: jest.fn().mockResolvedValue([]),
     findOne: jest.fn().mockResolvedValue(null),
     save: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }),
-    remove: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }), 
+    remove: jest.fn().mockResolvedValue({ id: 1, name: 'Test Module' }),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ModuleService,
+        CourseService,
+        UserService,
         {
           provide: getRepositoryToken(Modules),
           useValue: mockModulesRepository,
@@ -35,7 +42,7 @@ describe('ModuleService', () => {
           },
         },
         {
-          provide: CACHE_MANAGER, // Use CACHE_MANAGER as the provider
+          provide: CACHE_MANAGER,
           useValue: {
             get: jest.fn(),
             set: jest.fn(),
@@ -44,6 +51,42 @@ describe('ModuleService', () => {
         },
         {
           provide: getRepositoryToken(Lesson),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Enrollment),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Auth),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Modules),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -63,11 +106,12 @@ describe('ModuleService', () => {
       ],
     }).compile();
 
-    service = module.get<ModuleService>(ModuleService);
+    courseService = module.get<CourseService>(CourseService);
+    userService = module.get<UserService>(UserService)
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(courseService).toBeDefined();
   });
 
 

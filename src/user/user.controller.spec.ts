@@ -7,6 +7,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Auth } from '../auth/entities/auth.entity';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -16,6 +17,7 @@ describe('UserController', () => {
       controllers: [UserController],
       providers: [
         UserService,
+        
         {
           provide: JwtService,
           useValue: {
@@ -30,6 +32,14 @@ describe('UserController', () => {
             get: jest.fn(),
             set: jest.fn(),
             del: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Auth),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
           },
         },
         {

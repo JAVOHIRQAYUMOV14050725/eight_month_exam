@@ -28,6 +28,7 @@ const store = redisStore as unknown as (options?: any) => any;
         host: configService.get<string>('DB_HOST') || 'localhost',
         port: +configService.get<number>('DB_PORT') || 5432,
         username: configService.get<string>('DB_USER') || 'postgres',
+        secret: configService.get<string>('JWT_SECRET')|| 'oddiy_bola',
         password: configService.get<string>('DB_PASSWORD') || '4545',
         database: configService.get<string>('DB_NAME') || 'online_course',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],

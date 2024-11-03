@@ -1,33 +1,35 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "module": "commonjs", // Modullar uchun CommonJS ishlatiladi
+    "target": "ES2021", // ECMAScript 2021 ga maqsad qilib olingan
+    "outDir": "./dist", // Kompilyatsiyadan so'ng chiqish fayllari joylashadigan papka
+    "declaration": true, // TypeScript fayllaridan deklaratsiyalar yaratadi
+    "removeComments": true, // Kommentlarni olib tashlaydi
+    "emitDecoratorMetadata": true, // Dekoratorlar bilan ishlash uchun metadata yaratadi
+    "experimentalDecorators": true, // Dekoratorlar uchun eksperimental xususiyatni yoqadi
+    "allowSyntheticDefaultImports": true, // Sintetik default importlarga ruxsat beradi
+    "sourceMap": true, // Manba xaritalarini yaratadi
+    "esModuleInterop": true, // ES modullari va CommonJS modullari o'rtasida muvofiqlikni ta'minlaydi
+    "baseUrl": "./", // Asosiy URL
+    "incremental": true, // Inkremental kompilyatsiyani yoqadi
+    "skipLibCheck": true, // Kutubxonalarni tekshirishni o'tkazib yuboradi
+    "strictNullChecks": false, // Null tekshirishlarini qat'iy bajarishni o'chiradi
+    "noImplicitAny": false, // Aniq `any` tipiga ruxsat beradi
+    "strictBindCallApply": false, // `bind`, `call`, va `apply` metodlari uchun qat'iy cheklovlarni o'chiradi
+    "forceConsistentCasingInFileNames": false, // Fayl nomlarida harf yirikligini majburiy etmaydi
+    "noFallthroughCasesInSwitch": false, // Switch-da o'tish holatlari uchun qat'iy cheklovlarni o'chiradi
+    "moduleResolution": "node", // Node.js modullarini izlash strategiyasi
     "paths": {
       "src/*": [
-        "./src/*"
+        "./src/*" // `src` papkasidagi fayllarni topish uchun yo'llar
       ]
     }
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*" // `src` papkasidagi barcha fayllarni qo'shadi
   ],
   "exclude": [
-    "node_modules"
+    "node_modules", // `node_modules` papkasini chiqarib tashlaydi
+    "**/*.spec.ts" // Test fayllarini chiqarib tashlaydi
   ]
 }

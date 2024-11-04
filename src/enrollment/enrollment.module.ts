@@ -8,7 +8,6 @@ import { EnrollmentService } from './enrollment.service';
 import { Course } from '../course/entities/course.entity';
 import { User } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
-import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
     ConfigModule.forRoot(),

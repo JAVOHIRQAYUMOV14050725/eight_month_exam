@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Modules } from '../module/entities/module.entity';
 import { LessonService } from './lesson.service';
 import { Assignment } from '../assignment/entities/assignment.entity';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Course } from '../course/entities/course.entity';
 

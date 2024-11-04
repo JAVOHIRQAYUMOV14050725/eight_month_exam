@@ -7,7 +7,6 @@ import { Modules } from '../module/entities/module.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Course } from '../course/entities/course.entity';
 import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.entity';
 
 describe('LessonService', () => {
   let service: LessonService;

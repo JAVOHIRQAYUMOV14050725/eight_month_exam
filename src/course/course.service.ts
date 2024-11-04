@@ -16,7 +16,7 @@ import { Modules } from '../module/entities/module.entity';
 import { Lesson } from '../lesson/entities/lesson.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
+import { Enrollment } from '../enrollment/entities/enrollment.entity';
 
 @Injectable()
 export class CourseService {

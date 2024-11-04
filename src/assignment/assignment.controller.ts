@@ -5,7 +5,7 @@ import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
-import { User_Role } from 'src/enums/user.role.enum';
+import { User_Role } from '../enums/user.role.enum';
 
 @Controller('modules')
 @UseGuards(AuthGuard, RolesGuard)

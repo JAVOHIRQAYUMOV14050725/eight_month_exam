@@ -1,6 +1,6 @@
-import { Assignment } from 'src/assignment/entities/assignment.entity';
-import { content_type } from 'src/enums/lesson.contentType.enum';
-import { Modules } from 'src/module/entities/module.entity';
+import { Assignment } from '../../assignment/entities/assignment.entity';
+import { content_type } from '../../enums/lesson.contentType.enum';
+import { Modules } from '../../module/entities/module.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()

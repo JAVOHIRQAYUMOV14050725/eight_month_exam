@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { Course } from '../course/entities/course.entity';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { title } from 'process';
 
 @Injectable()
 export class ModuleService {

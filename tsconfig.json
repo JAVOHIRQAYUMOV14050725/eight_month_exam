@@ -21,7 +21,7 @@
     "moduleResolution": "node", // Node.js modullarini izlash strategiyasi
     "paths": {
       "src/*": [
-        "./src/*" // `src` papkasidagi fayllarni topish uchun yo'llar
+        "./src/*"
       ]
     }
   },
